@@ -30,12 +30,15 @@ export class UsersController {
   public static async create(request: Request, response: Response, next: NextFunction): Promise<Response|undefined> {
     try {
       const { name, company_id, username, password } = request.body;
-      logger.debug({name, company_id, username, password});
-      const created_at = new Date();
-      const hashedPassword:string = await hashPassword(password);
       const userRepository = await UsersController.getRepository()
       const createUserService = new CreateUserService(userRepository);
-      const user = await createUserService.execute({ name, company_id, username, password: hashedPassword, created_at });
+      const user = await createUserService.execute({
+        name,
+        company_id,
+        username,
+        password: await hashPassword(password),
+        created_at: new Date()
+      });
       return response.json(user);
     } catch (error) {
       next(error)

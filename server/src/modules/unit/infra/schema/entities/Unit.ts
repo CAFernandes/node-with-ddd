@@ -2,10 +2,10 @@ import { Entity, ObjectIdColumn, Column, ManyToOne, OneToMany, ObjectId } from '
 import { Company } from '@company/infra/schema/entities/Company';
 import { Active } from '@active/infra/schema/entities/Active';
 
-@Entity()
+@Entity('unities')
 export class Unit {
   @ObjectIdColumn()
-  id: ObjectId;
+  _id: ObjectId;
 
   @Column()
   name: string;

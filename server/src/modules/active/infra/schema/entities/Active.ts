@@ -1,10 +1,10 @@
 import { Entity, ObjectIdColumn, Column, ManyToOne, ObjectId } from 'typeorm';
 import { Unit } from '@unit/infra/schema/entities/Unit';
 
-@Entity()
+@Entity('active')
 export class Active {
   @ObjectIdColumn()
-  id: ObjectId;
+  _id: ObjectId;
 
   @Column()
   image: string;

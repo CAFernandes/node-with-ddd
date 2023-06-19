@@ -2,10 +2,10 @@ import { Entity, ObjectIdColumn, Column, OneToMany, ObjectId } from 'typeorm';
 import { Unit } from '@unit/infra/schema/entities/Unit';
 import { User } from '@user/infra/schema/entities/User';
 
-@Entity()
+@Entity('companies')
 export class Company {
   @ObjectIdColumn()
-  id: ObjectId;
+  _id: ObjectId;
 
   @Column()
   name: string;

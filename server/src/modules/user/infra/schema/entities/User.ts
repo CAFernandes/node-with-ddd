@@ -18,7 +18,7 @@ export class User {
   _id: ObjectId;
 
   @Column()
-  company_id: ObjectId;
+  company_id: string;
 
   @Column()
   name: string;
