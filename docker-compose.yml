@@ -1,0 +1,42 @@
+version: '3.1'
+services:
+  mongo:
+    image: mongo
+    container_name: tractian_Database
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tractian_admim
+      MONGO_INITDB_ROOT_PASSWORD: tractian_pass
+    ports:
+      - 27017:27017
+    networks:
+      - app-net
+    volumes:
+      - /home/cafernandes/database
+  mongo-express:
+    image: mongo-express
+    container_name: tractian_Database_Manage
+    restart: always
+    ports:
+      - 8081:8081
+    networks:
+      - app-net
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: tractian_admim
+      ME_CONFIG_MONGODB_ADMINPASSWORD: tractian_pass
+      ME_CONFIG_MONGODB_URL: mongodb://tractian_admim:tractian_pass@mongo:27017/
+  # application:
+  #   container_name: tractian_Application
+  #   build:
+  #     context: .
+  #     dockerfile: node.dockerfile
+  #   networks:
+  #     - app-net
+  #   ports:
+  #     - 1520:1520
+networks:
+  app-net:
+    driver: bridge
+volumes:
+  postgresql_data:
+    driver: local
