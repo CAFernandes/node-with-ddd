@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
-import { Company } from '@company/infra/schema/Company';
 import { getDataSource } from '@/connection/AppDataSource';
-import { Repository } from 'typeorm';
+import { Company } from '@company/infra/schema/Company';
 import { CreateCompanyService } from '@company/services/CreateCompanyService';
-import { UpdateCompanyService } from '@company/services/UpdateCompanyService';
 import { DeleteCompanyService } from '@company/services/DeleteCompanyService';
+import { UpdateCompanyService } from '@company/services/UpdateCompanyService';
+import { NextFunction, Request, Response } from 'express';
+import { Repository } from 'typeorm';
 
 export class CompanyController {
   private static async getRepository(): Promise<Repository<Company>> {
@@ -32,7 +32,7 @@ export class CompanyController {
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
-      const { name } = request.body;
+      const { name }: { name: string } = request.body;
       const created_at = new Date();
       const createCompanyService = new CreateCompanyService(
         await CompanyController.getRepository()
@@ -56,11 +56,15 @@ export class CompanyController {
     request: Request,
     response: Response
   ): Promise<Response> {
-    const { id } = request.params;
-    const { name } = request.body;
-    const updateCompanyService = new UpdateCompanyService();
-    // const company = await updateCompanyService.execute({ name });
-    return response.json({});
+    const { name, company_id } = request.body;
+    const updateCompanyService = new UpdateCompanyService(
+      await CompanyController.getRepository()
+    );
+    const company = await updateCompanyService.execute({
+      name,
+      company_id: company_id,
+    });
+    return response.json(company);
   }
   public static async delete(
     request: Request,

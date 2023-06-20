@@ -1,18 +1,21 @@
-import https from 'https';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import https from 'https';
 import 'reflect-metadata';
 
+import { logger } from '@/utils/logger';
+import { ActiveRouter } from '@active/routers/ActiveRouter';
+import { CompanyRouter } from '@company/routers/CompanyRouter';
+import { authenticateToken } from '@middlewares/authenticateToken';
 import { errorHandling } from '@middlewares/errorHandling';
 import { loggerRequest } from '@middlewares/loggerRequest';
+import { UnitRouter } from '@unit/routers/UnitRouter';
+import { SessionRouter } from '@user/routers/SessionRouter';
+import { UserRouter } from '@user/routers/UserRouter';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { logger } from '@/utils/logger';
 import { createDatabaseAndCollections } from './services/createDatabaseAndCollections';
-import { UserRouter } from '@user/routers/UserRouter';
-import { CompanyRouter } from '@company/routers/CompanyRouter';
-import { SessionRouter } from '@user/routers/SessionRouter';
 
 type TlsOptions = {
   key: Buffer;
@@ -57,15 +60,11 @@ class App {
    * This function is used to add the routes to the express app.
    */
   async routes(): Promise<void> {
-    this.app.get('/', (req, res) => {
-      res.send('Hello World!');
-    });
     this.app.use('/session', new SessionRouter().routes());
-    this.app.use('/user', new UserRouter().routes());
-    this.app.use('/company', new CompanyRouter().routes());
-    // this.app.use(Session.routes())
-    // this.app.use(Teams.routes())
-    // this.app.use(Game.routes())
+    this.app.use('/user', authenticateToken, new UserRouter().routes());
+    this.app.use('/company', authenticateToken, new CompanyRouter().routes());
+    this.app.use('/unit', authenticateToken, new UnitRouter().routes());
+    this.app.use('/active', authenticateToken, new ActiveRouter().routes());
     this.app.use(errorHandling);
   }
   /**

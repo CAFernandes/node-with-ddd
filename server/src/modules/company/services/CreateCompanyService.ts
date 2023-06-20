@@ -1,6 +1,6 @@
 import { BadRequest } from '@/errors/BadRequest';
+import { ICreateCompanyDTO } from '@company/infra/dtos/ICreateCompanyDTO';
 import { Company } from '@company/infra/schema/Company';
-import { CreateUserDTO } from '@user/infra/dtos/CreateUserDTO';
 import { Repository } from 'typeorm';
 
 export class CreateCompanyService {
@@ -9,7 +9,7 @@ export class CreateCompanyService {
     this.companyRepository = companyRepository;
   }
 
-  async execute({ name, created_at }: CreateUserDTO) {
+  async execute({ name, created_at }: ICreateCompanyDTO) {
     if (!name || !name.trim() || typeof name !== 'string') {
       throw new BadRequest('Name is required');
     }

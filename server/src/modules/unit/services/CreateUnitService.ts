@@ -2,7 +2,7 @@ import { getDataSource } from '@/connection/AppDataSource';
 import { BadRequest } from '@/errors/BadRequest';
 import { UnauthorizedError } from '@/errors/UnauthorizedError';
 import { Company } from '@company/infra/schema/Company';
-import { ICreateUnitDTO } from '@unit/dtos/ICreateUnitDTO';
+import { ICreateUnitDTO } from '@unit/infra/dtos/ICreateUnitDTO';
 import { Unit } from '@unit/infra/schema/Unit';
 import { ObjectId } from 'mongodb';
 import { InsertResult, Repository } from 'typeorm';
