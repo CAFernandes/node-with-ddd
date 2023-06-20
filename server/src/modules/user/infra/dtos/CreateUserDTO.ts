@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from 'mongodb';
 
 export type CreateUserDTO = {
   name: string;
@@ -6,4 +6,4 @@ export type CreateUserDTO = {
   username: string;
   password: string;
   created_at?: Date;
-}
+};

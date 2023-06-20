@@ -1,16 +1,15 @@
+import { authenticateToken } from '@middlewares/authenticateToken';
 import { SessionController } from '@user/controllers/SessionsController';
 import { Router } from 'express';
 export class SessionRouter {
   public router: Router;
-  private sessionController: SessionController;
   constructor() {
     this.router = Router();
-    this.routes();
   }
 
   routes() {
-    this.router.post('/', this.sessionController.store);
+    this.router.post('/', SessionController.create);
+    this.router.post('/refresh', SessionController.refresh);
+    return this.router;
   }
-
-
 }

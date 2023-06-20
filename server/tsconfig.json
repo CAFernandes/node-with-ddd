@@ -6,9 +6,7 @@
     "allowJs": true,
     "strict": true,
     "removeComments": true,
-    "typeRoots": [
-      "./node_modules/@types",
-    ],
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -20,30 +18,20 @@
     "experimentalDecorators": true,
     "paths": {
       //? Config
-      "@config/*":["./src/config/*"],
+      "@config/*": ["./src/config/*.ts"],
       //? Shared
-      "@/errors/*":["./src/shared/errors/*.ts"],
-      "@/connection/*":["./src/shared/connection/*.ts"],
-      "@middlewares/*":["./src/shared/middlewares/*.ts"],
-      "@services/*":["./src/shared/services/*"],
-      "@/utils/*":["./src/shared/utils/*"],
+      "@/errors/*": ["./src/shared/errors/*.ts"],
+      "@/connection/*": ["./src/shared/connection/*.ts"],
+      "@middlewares/*": ["./src/shared/middlewares/*.ts"],
+      "@services/*": ["./src/shared/services/*"],
+      "@/utils/*": ["./src/shared/utils/*"],
       //? Modules
-      "@active/*":["./src/modules/active/*"],
-      "@company/*":["./src/modules/company/*"],
-      "@unit/*":["./src/modules/unit/*"],
-      "@user/*":["./src/modules/user/*"],
+      "@active/*": ["./src/modules/active/*"],
+      "@company/*": ["./src/modules/company/*"],
+      "@unit/*": ["./src/modules/unit/*"],
+      "@user/*": ["./src/modules/user/*"]
     }
   },
-  "include": [
-    "./src/**/*.ts",
-    "./src/**/*.json",
-    "./src/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "./src/test/*",
-    "./docker/*",
-    "./*.js",
-    "*.js"
-  ]
+  "include": ["./src/**/*.ts", "./src/**/*.json", "./src/**/*.d.ts"],
+  "exclude": ["node_modules", "./src/test/*", "./docker/*", "./*.js", "*.js"]
 }

@@ -1,7 +1,7 @@
-import { BadRequest } from "@/errors/BadRequest";
-import { Company } from "@company/infra/schema/entities/Company";
-import { CreateUserDTO } from "@user/infra/dtos/CreateUserDTO";
-import { Repository } from "typeorm";
+import { BadRequest } from '@/errors/BadRequest';
+import { Company } from '@company/infra/schema/Company';
+import { CreateUserDTO } from '@user/infra/dtos/CreateUserDTO';
+import { Repository } from 'typeorm';
 
 export class CreateCompanyService {
   private companyRepository: Repository<Company>;
@@ -23,7 +23,10 @@ export class CreateCompanyService {
       created_at = new Date();
     }
 
-    const createdCompany = await this.companyRepository.insert({ name, created_at });
+    const createdCompany = await this.companyRepository.insert({
+      name,
+      created_at,
+    });
     return createdCompany;
   }
 }

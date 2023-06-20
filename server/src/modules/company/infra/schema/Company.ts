@@ -1,6 +1,6 @@
 import { Entity, ObjectIdColumn, Column, OneToMany, ObjectId } from 'typeorm';
-import { Unit } from '@unit/infra/schema/entities/Unit';
-import { User } from '@user/infra/schema/entities/User';
+import { Unit } from '@unit/infra/schema/Unit';
+import { User } from '@user/infra/schema/User';
 
 @Entity('companies')
 export class Company {

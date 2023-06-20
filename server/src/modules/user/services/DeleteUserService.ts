@@ -1,6 +1,6 @@
-import { User } from "@user/infra/schema/entities/User";
-import { IUserService } from "./IUserService";
-import { Repository } from "typeorm";
+import { User } from '@user/infra/schema/User';
+import { IUserService } from './IUserService';
+import { Repository } from 'typeorm';
 
 export class DeleteUserService implements IUserService {
   readonly userRepository: Repository<User>;

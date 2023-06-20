@@ -1,6 +1,6 @@
-import { Collection, Document } from "mongodb";
+import { Collection, Document } from 'mongodb';
 
 export const createIndexesUsers = async (collection: Collection<Document>) => {
-  await collection.createIndex({ company_id: 1 })
-  await collection.createIndex({ company_id: 1, username: 1 }, { unique: true })
-}
+  await collection.createIndex({ company_id: 1 });
+  await collection.createIndex({ username: 1 }, { unique: true });
+};

@@ -1,4 +1,4 @@
-import { configure, getLogger } from "log4js";
+import { configure, getLogger } from 'log4js';
 
 //atenção habilitar o log desabilita a saida no console
 if (process.env.SAVE_LOG == 'true') {
@@ -13,23 +13,23 @@ if (process.env.SAVE_LOG == 'true') {
         compress: true, // compress the backups
         encoding: 'utf-8',
         mode: 0o0640,
-        flags: 'w+'
+        flags: 'w+',
       },
       dateFile: {
         type: 'dateFile',
         filename: 'api.log',
         pattern: 'yyyy-MM-dd-hh',
-        compress: true
+        compress: true,
       },
       out: {
-        type: 'stdout'
-      }
+        type: 'stdout',
+      },
     },
     categories: {
-      default: { appenders: ['file', 'dateFile', 'out'], level: 'trace' }
-    }
-  })
+      default: { appenders: ['file', 'dateFile', 'out'], level: 'trace' },
+    },
+  });
 }
 
 /* Exporting the logger object. */
-export const logger = getLogger('Tractian')
+export const logger = getLogger('Tractian');

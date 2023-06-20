@@ -1,13 +1,11 @@
 import { Entity, ObjectIdColumn, Column, ManyToOne, ObjectId } from 'typeorm';
-import { Unit } from '@unit/infra/schema/entities/Unit';
+import { Unit } from '@unit/infra/schema/Unit';
+import { Status } from './eStatus';
 
 @Entity('active')
 export class Active {
   @ObjectIdColumn()
   _id: ObjectId;
-
-  @Column()
-  image: string;
 
   @Column()
   name: string;
@@ -22,10 +20,25 @@ export class Active {
   proprietary: string;
 
   @Column()
-  status: string;
+  status: Status;
 
   @Column({ type: 'float' })
-  healthLevel: number;
+  health_level: number;
+
+  @Column()
+  company_id: string;
+
+  @Column()
+  unit_id: string;
+
+  @Column()
+  created_at: Date;
+
+  @Column()
+  updated_at?: Date;
+
+  @Column()
+  image: string;
 
   @ManyToOne(() => Unit, unit => unit.active)
   unit: Unit;

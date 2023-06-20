@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules -r dotenv/config ./src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretty": "prettier --write \"./**/*.{ts,json}\"",
+    "lint": "eslint --ext .ts,.json --ignore-path .gitignore ."
   },
   "keywords": [],
   "author": "",

@@ -1,8 +1,6 @@
 import { Entity, ObjectIdColumn, Column, ManyToOne } from 'typeorm';
-import { Company } from '@company/infra/schema/entities/Company';
+import { Company } from '@company/infra/schema/Company';
 import { ObjectId } from 'mongodb';
-// import { v4 } from 'uuid';
-
 
 @Entity('users')
 export class User {
@@ -34,6 +32,9 @@ export class User {
 
   @Column()
   update_at?: Date;
+
+  @Column()
+  refresh_token?: string;
 
   @ManyToOne(() => Company, company => company.users)
   company?: Company;
