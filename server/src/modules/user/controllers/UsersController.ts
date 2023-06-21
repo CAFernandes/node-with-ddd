@@ -79,10 +79,9 @@ export class UsersController {
   ): Promise<Response | undefined> {
     try {
       const { id } = request.params;
-      const { name } = request.body;
       const usersRepository = await UsersController.getRepository();
       const updateUserService = new UpdateUserService(usersRepository);
-      const user = await updateUserService.execute({ name });
+      const user = await updateUserService.execute({ ...request.body, id });
       return response.json(user);
     } catch (error) {
       next(error);
@@ -98,7 +97,7 @@ export class UsersController {
       const usersRepository = await UsersController.getRepository();
       const deleteUserService = new DeleteUserService(usersRepository);
       await deleteUserService.execute(id);
-      return response.json([]);
+      return response.status(204).send();
     } catch (error) {
       next(error);
     }

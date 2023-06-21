@@ -26,7 +26,7 @@ export class CompanyController {
       next(error);
     }
   }
-  public static async store(
+  public static async create(
     request: Request,
     response: Response,
     next: NextFunction
@@ -71,8 +71,10 @@ export class CompanyController {
     response: Response
   ): Promise<Response> {
     const { id } = request.params;
-    const deleteCompanyService = new DeleteCompanyService();
-    // await deleteCompanyService.execute(id);
-    return response.json([]);
+    const deleteCompanyService = new DeleteCompanyService(
+      await CompanyController.getRepository()
+    );
+    await deleteCompanyService.execute(id);
+    return response.status(204).send();
   }
 }

@@ -1,6 +1,7 @@
 import { getDataSource } from '@/connection/AppDataSource';
 import { Active } from '@active/infra/schema/Active';
 import { CreateActiveService } from '@active/services/CreateActiveService';
+import { DeleteActiveService } from '@active/services/DeleteActiveService';
 import { UpdateActiveService } from '@active/services/UpdateActiveService';
 import { NextFunction, Request, Response } from 'express';
 import { ObjectId, Repository } from 'typeorm';
@@ -11,7 +12,11 @@ export class ActiveController {
       dataSource.getMongoRepository(Active)
     );
   }
-  static async index(request: Request, response: Response, next: NextFunction) {
+  static async index(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     try {
       const activeRepository = await ActiveController.getRepository();
       const actives = await activeRepository.find({
@@ -22,7 +27,11 @@ export class ActiveController {
       next(error);
     }
   }
-  static async show(request: Request, response: Response, next: NextFunction) {
+  static async show(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     try {
       const activeRepository = await ActiveController.getRepository();
       const active = await activeRepository.findOne({
@@ -41,7 +50,7 @@ export class ActiveController {
     request: Request,
     response: Response,
     next: NextFunction
-  ) {
+  ): Promise<Response | undefined> {
     try {
       const createActiveService = new CreateActiveService(
         await ActiveController.getRepository()
@@ -59,19 +68,33 @@ export class ActiveController {
     request: Request,
     response: Response,
     next: NextFunction
-  ) {
+  ): Promise<Response | undefined> {
     try {
-      const { id, unit_id } = request.params;
+      const { id } = request.params;
       const activeRepository = await ActiveController.getRepository();
       const updateActiveService = new UpdateActiveService(activeRepository);
       const active = await updateActiveService.execute({
         ...request.body,
         id,
-        unit_id,
-        company_id: request?.user?.companyId || '',
       });
 
       return response.json(active);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async delete(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    try {
+      const { id } = request.params;
+      const deleteActiveService = new DeleteActiveService(
+        await ActiveController.getRepository()
+      );
+      await deleteActiveService.execute(id);
+      return response.status(204).send();
     } catch (error) {
       next(error);
     }

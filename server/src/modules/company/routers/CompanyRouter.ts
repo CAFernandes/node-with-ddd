@@ -1,5 +1,4 @@
 import { CompanyController } from '@company/controllers/CompanyController';
-import { authenticateToken } from '@middlewares/authenticateToken';
 import { Router } from 'express';
 
 export class CompanyRouter {
@@ -9,11 +8,11 @@ export class CompanyRouter {
   }
 
   public routes(): Router {
-    this.router.get('/', authenticateToken, CompanyController.index);
-    // this.router.get('/:id', this.companyController.show);
-    this.router.post('/', CompanyController.store);
-    // this.router.put('/:id', this.companyController.update);
-    // this.router.delete('/:id', this.companyController.delete);
+    this.router.get('/', CompanyController.index);
+    this.router.get('/:id', CompanyController.show);
+    this.router.post('/', CompanyController.create);
+    this.router.put('/:id', CompanyController.update);
+    this.router.delete('/:id', CompanyController.delete);
 
     return this.router;
   }

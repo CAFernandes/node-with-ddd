@@ -1,6 +1,7 @@
 import { getDataSource } from '@/connection/AppDataSource';
 import { Unit } from '@unit/infra/schema/Unit';
 import { CreateUnitService } from '@unit/services/CreateUnitService';
+import { DeleteUnitService } from '@unit/services/DeleteUnitServices';
 import { UpdateUnitService } from '@unit/services/UpdateUnitService';
 import { NextFunction, Request, Response } from 'express';
 import { ObjectId, Repository } from 'typeorm';
@@ -60,6 +61,19 @@ export class UnitsController {
         ...req.body,
       });
       return res.status(200).json(unit);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const unitRepository = await UnitsController.getRepository();
+      const deleteUnitService = new DeleteUnitService(unitRepository);
+      await deleteUnitService.execute(
+        req?.user?.companyId || '',
+        req.params.id
+      );
+      return res.status(204).json();
     } catch (error) {
       next(error);
     }

@@ -18,7 +18,7 @@ export class UpdateCompanyService {
     }
     await this.checkIfCompanyExists(name);
     const company = await this.findCompany(company_id);
-    company.name = name;
+    this.companyRepository.merge(company, { name, updated_at });
     await this.companyRepository.save(company);
     return company;
   }
