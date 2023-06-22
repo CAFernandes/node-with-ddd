@@ -1,10 +1,9 @@
 import { UpdateUserDTO } from '@user/infra/dtos/UpdateUserDTO';
-import { IUserService } from './IUserService';
-import { Repository } from 'typeorm';
 import { User } from '@user/infra/schema/User';
+import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 
-export class UpdateUserService implements IUserService {
+export class UpdateUserService {
   private readonly acceptedFields = [
     'name',
     'username',
