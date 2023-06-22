@@ -1,9 +1,9 @@
 import { User } from '@user/infra/schema/User';
-import { IUserService } from './IUserService';
+
 import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 
-export class DeleteUserService implements IUserService {
+export class DeleteUserService {
   readonly userRepository: Repository<User>;
   constructor(userRepository: Repository<User>) {
     this.userRepository = userRepository;

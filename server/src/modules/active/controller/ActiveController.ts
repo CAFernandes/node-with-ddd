@@ -2,6 +2,8 @@ import { getDataSource } from '@/connection/AppDataSource';
 import { Active } from '@active/infra/schema/Active';
 import { CreateActiveService } from '@active/services/CreateActiveService';
 import { DeleteActiveService } from '@active/services/DeleteActiveService';
+import { ListActiveService } from '@active/services/ListActiveService';
+import { SearchActiveService } from '@active/services/SearchActiveService';
 import { UpdateActiveService } from '@active/services/UpdateActiveService';
 import { NextFunction, Request, Response } from 'express';
 import { ObjectId, Repository } from 'typeorm';
@@ -18,11 +20,14 @@ export class ActiveController {
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
-      const activeRepository = await ActiveController.getRepository();
-      const actives = await activeRepository.find({
-        where: { company_id: request?.user?.companyId || '' },
-      });
-      return response.json(actives);
+      const { unit_id } = request.params;
+      const listActiveService = new ListActiveService(
+        await ActiveController.getRepository()
+      );
+
+      return response.json(
+        await listActiveService.execute(request?.user?.companyId || '', unit_id)
+      );
     } catch (error) {
       next(error);
     }
@@ -33,15 +38,12 @@ export class ActiveController {
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
-      const activeRepository = await ActiveController.getRepository();
-      const active = await activeRepository.findOne({
-        where: {
-          _id: new ObjectId(request.params.id),
-          unit_id: request.params.unit_id,
-          company_id: request?.user?.companyId || '',
-        },
-      });
-      return response.json(active);
+      const { id } = request.params;
+      const searchActiveService = new SearchActiveService(
+        await ActiveController.getRepository()
+      );
+
+      return response.json(await searchActiveService.execute(id));
     } catch (error) {
       next(error);
     }

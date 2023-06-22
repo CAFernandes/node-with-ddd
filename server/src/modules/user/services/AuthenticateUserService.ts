@@ -1,16 +1,17 @@
-import { BadRequest } from '@/errors/BadRequest';
-import { UnauthorizedError } from '@/errors/UnauthorizedError';
-import { AuthenticateUserDTO } from '@user/infra/dtos/AuthenticateDTO';
-import { User } from '@user/infra/schema/User';
 import { sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
-import { IUserService } from './IUserService';
+
+import { UnauthorizedError } from '@/errors/UnauthorizedError';
+import { BadRequest } from '@/errors/BadRequest';
+
+import { User } from '@user/infra/schema/User';
 import { comparePasswords } from '@user/infra/middleware/comparePasswords';
+import { AuthenticateUserDTO } from '@user/infra/dtos/AuthenticateDTO';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'default';
 
-export class AuthenticateUserService implements IUserService {
+export class AuthenticateUserService {
   constructor(readonly userRepository: Repository<User>) {}
   async execute({ username, password }: AuthenticateUserDTO) {
     if (!username || !password) {

@@ -8,6 +8,8 @@ import { CreateUserService } from '@user/services/CreateUserService';
 import { UpdateUserService } from '@user/services/UpdateUserService';
 import { hashPassword } from '@user/infra/middleware/hashPassword';
 import { DeleteUserService } from '@user/services/DeleteUserService';
+import { SearchUserService } from '@user/services/SearchUserService';
+import { ListUserService } from '@user/services/ListUserService';
 
 export class UsersController {
   private static async getRepository(): Promise<Repository<User>> {
@@ -22,13 +24,10 @@ export class UsersController {
   ): Promise<Response | undefined> {
     try {
       const { company_id } = request.params;
-      const usersRepository = await UsersController.getRepository();
-      const users = await usersRepository.find({
-        where: {
-          company_id: company_id,
-        },
-      });
-      return response.json(users);
+      const listUserService = new ListUserService(
+        await UsersController.getRepository()
+      );
+      return response.json(await listUserService.execute(company_id));
     } catch (error) {
       next(error);
     }
@@ -61,13 +60,10 @@ export class UsersController {
   ): Promise<Response | undefined> {
     try {
       const { id } = request.params;
-      const usersRepository = await UsersController.getRepository();
-      const user = await usersRepository.findOne({
-        where: {
-          _id: new ObjectId(id),
-        },
-      });
-      return response.json(user);
+      const searchCompanyService = new SearchUserService(
+        await UsersController.getRepository()
+      );
+      return response.json(searchCompanyService.execute(id));
     } catch (error) {
       next(error);
     }

@@ -1,14 +1,13 @@
 import { ObjectId } from 'mongodb';
 import { InsertResult, Repository } from 'typeorm';
 
-import { IUserService } from './IUserService';
 import { User } from '@user/infra/schema/User';
 import { BadRequest } from '@/errors/BadRequest';
 import { Company } from '@company/infra/schema/Company';
 import { getDataSource } from '@/connection/AppDataSource';
 import { CreateUserDTO } from '@user/infra/dtos/CreateUserDTO';
 
-export class CreateUserService implements IUserService {
+export class CreateUserService {
   readonly userRepository: Repository<User>;
   constructor(userRepository: Repository<User>) {
     this.userRepository = userRepository;

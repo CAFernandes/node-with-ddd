@@ -2,9 +2,11 @@ import { getDataSource } from '@/connection/AppDataSource';
 import { Company } from '@company/infra/schema/Company';
 import { CreateCompanyService } from '@company/services/CreateCompanyService';
 import { DeleteCompanyService } from '@company/services/DeleteCompanyService';
+import { ListCompanyService } from '@company/services/ListCompanyService';
+import { SearchCompanyServices } from '@company/services/SearchCompanyServices';
 import { UpdateCompanyService } from '@company/services/UpdateCompanyService';
 import { NextFunction, Request, Response } from 'express';
-import { Repository } from 'typeorm';
+import { ObjectId, Repository } from 'typeorm';
 
 export class CompanyController {
   private static async getRepository(): Promise<Repository<Company>> {
@@ -19,9 +21,10 @@ export class CompanyController {
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
-      const companyRepository = await CompanyController.getRepository();
-      const companys = await companyRepository.find();
-      return response.json(companys);
+      const listCompanyService = new ListCompanyService(
+        await CompanyController.getRepository()
+      );
+      return response.json(await listCompanyService.execute());
     } catch (error) {
       next(error);
     }
@@ -47,10 +50,12 @@ export class CompanyController {
     request: Request,
     response: Response
   ): Promise<Response> {
-    const { name } = request.params;
-    const companyRepository = await CompanyController.getRepository();
-    const company = await companyRepository.find({ where: { name: name } });
-    return response.json(company);
+    const { name } = request.query;
+    const searchCompanyService = new SearchCompanyServices(
+      await CompanyController.getRepository()
+    );
+    const companys = await searchCompanyService.execute(name as string);
+    return response.json(companys);
   }
   public static async update(
     request: Request,
