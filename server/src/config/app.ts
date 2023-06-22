@@ -60,6 +60,7 @@ class App {
    * This function is used to add the routes to the express app.
    */
   async routes(): Promise<void> {
+    this.app.use('/images', express.static(resolve(__dirname, '..', 'images')))
     this.app.use('/session', new SessionRouter().routes());
     this.app.use('/user', authenticateToken, new UserRouter().routes());
     this.app.use('/company', authenticateToken, new CompanyRouter().routes());

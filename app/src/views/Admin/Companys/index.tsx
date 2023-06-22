@@ -1,4 +1,4 @@
-import CardTable from "../../../components/Cards/CardTable";
+import CardTable from "../../../components/Cards/CardTableUnits";
 
 export const Companys = () => {
   return (

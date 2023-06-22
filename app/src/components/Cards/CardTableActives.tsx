@@ -1,19 +1,25 @@
 type Color = "light" | "dark";
 type Column = string[];
-type Data = Record<string, string | number | Date | Record<string, unknown>>[];
+type rows = Record<string, string | number | Date | Record<string, unknown>>[];
 type CardTableProps = {
   color?: Color;
   title?: string;
   columns?: Column;
-  data?: Data;
+  rows?: rows;
+  onSee: (id: string) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
 };
 
-export default function CardTable({
+export const CardTableActives = ({
   color = "dark",
   title,
   columns,
-  data,
-}: CardTableProps) {
+  rows,
+  onSee,
+  onEdit,
+  onDelete,
+}: CardTableProps) => {
   return (
     <>
       <div
@@ -58,25 +64,38 @@ export default function CardTable({
               </tr>
             </thead>
             <tbody>
-              {data &&
-                data.map((row, index) => (
+              {rows &&
+                rows.map((row, index) => (
                   <tr key={index}>
-                    {Object.values(row).map((value, index) => (
-                      <td
-                        className={
-                          "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 " +
+                    {Object.values(row).map((value, index) => {
+                      if (index == 0) return;
+                      return (
+                        <td
+                          className={
+                            "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 " +
+                            (color === "light"
+                              ? "bg-gray-100 text-gray-500 border-gray-100"
+                              : "bg-gray-800 text-gray-300 border-gray-700")
+                          }
+                          key={index}
+                        >
+                          {(index == 4 && defineState(value as string)) ||
+                            (index == 5 && defineHealth(value as string)) ||
+                            (index == 6 && new Date(value).toLocaleString()) ||
+                            (value as string)}
+                        </td>
+                      )
+                    })}
+                    <td className={
+                          "border-t-0 px-6 align-middle text-center border-l-0 border-r-0 text-xs whitespace-nowrap p-4 " +
                           (color === "light"
                             ? "bg-gray-100 text-gray-500 border-gray-100"
                             : "bg-gray-800 text-gray-300 border-gray-700")
-                        }
-                        key={index}
-                      >
-                        {(index == 3 && defineState(value as string)) ||
-                          (index == 4 && defineHealth(value as string)) ||
-                          (index == 5 && new Date(value).toLocaleString()) ||
-                          (value as string)}
-                      </td>
-                    ))}
+                        }>
+                          <i className="fas fa-eye text-green-500 mr-2 cursor-pointer" onClick={()=> onSee(row[0] as string)}></i>
+                          <i className="fas fa-edit text-blue-500 mr-2 cursor-pointer" onClick={()=> onEdit(row[0] as string)}></i>
+                          <i className="fas fa-trash text-red-500 mr-2 cursor-pointer" onClick={()=> onDelete(row[0] as string)}></i>
+                        </td>
                   </tr>
                 ))}
             </tbody>

@@ -4,6 +4,8 @@ import { ICreateActiveDTO } from '@active/infra/dtos/ICreateActiveDTO';
 import { Active } from '@active/infra/schema/Active';
 import { Company } from '@company/infra/schema/Company';
 import { Unit } from '@unit/infra/schema/Unit';
+import { writeFile } from "fs";
+import { resolve } from "path";
 import { ObjectId, Repository } from 'typeorm';
 
 export class CreateActiveService {
@@ -35,9 +37,10 @@ export class CreateActiveService {
     await this.checkIfUnitExists(unit_id);
     await this.checkIfCompanyExist(company_id);
     await this.checkIfActiveExists(name, unit_id, company_id);
-
+    const image_name = `${Date.now()}-${name}.${this.getImageExtension(image)}`;
+    this.saveImage(image, image_name);
     return this.activeRepository.manager.insert(Active, {
-      image,
+      image: image_name,
       name,
       description,
       model,
@@ -85,5 +88,26 @@ export class CreateActiveService {
     if (!searchedCompany) {
       throw new BadRequest('Empresa não encontrada');
     }
+  }
+  private getImageExtension(base64String: string): string | null {
+    const matches = base64String.match(/^data:image\/([a-zA-Z0-9]+);base64,/);
+
+    if (matches && matches.length === 2) {
+      return matches[1]; // Retorna a extensão encontrada
+    }
+
+    return null; // Retorna null se a extensão não for encontrada
+  }
+
+  private async saveImage(base64String: string, nomeArquivo: string): Promise<void> {
+    const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+
+    writeFile(resolve(__dirname, '..', '..', '..', "public", nomeArquivo), buffer, (err) => {
+      if (err) {
+        console.error("Erro ao criar arquivo:", err);
+        throw err;
+      }
+    });
   }
 }

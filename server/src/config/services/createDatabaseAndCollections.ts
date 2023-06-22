@@ -1,13 +1,13 @@
-import { Db, MongoClient } from 'mongodb';
 import { logger } from '@/utils/logger';
-import { createIndexesUsers } from './createIndexesUsers';
+import { Db, MongoClient } from 'mongodb';
 import { createIndexesCompanies } from './createIndexesCompanies';
 import { createIndexesUnits } from './createIndexesUnits';
+import { createIndexesUsers } from './createIndexesUsers';
 
 export const createDatabaseAndCollections = async () => {
   const dbName = process.env.DATABASE;
   logger.info(`Creating database ${dbName} and collections...`);
-  const mongoUrl = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@localhost:27017`;
+  const mongoUrl = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}`;
   const client = await MongoClient.connect(mongoUrl);
 
   const listDatabases = await client.db().admin().listDatabases();

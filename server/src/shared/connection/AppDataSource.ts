@@ -1,13 +1,13 @@
-import { DataSource } from 'typeorm';
 import { logger } from '@/utils/logger';
+import { Active } from '@active/infra/schema/Active';
+import { Company } from '@company/infra/schema/Company';
 import { Unit } from '@unit/infra/schema/Unit';
 import { User } from '@user/infra/schema/User';
-import { Company } from '@company/infra/schema/Company';
-import { Active } from '@active/infra/schema/Active';
+import { DataSource } from 'typeorm';
 
 const AppDataSource = new DataSource({
   type: 'mongodb',
-  url: `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@localhost:27017/${process.env.DATABASE}?authSource=admin`,
+  url: `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE}?authSource=admin`,
 
   entities: [Company, Unit, User, Active],
   subscribers: [],
