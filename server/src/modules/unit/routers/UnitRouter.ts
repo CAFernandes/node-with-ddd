@@ -9,7 +9,7 @@ export class UnitRouter {
   routes(): Router {
     this.router.get('/', UnitsController.index);
     this.router.get('/:id', UnitsController.show);
-    this.router.post('/', UnitsController.create);
+    this.router.post('/:id', UnitsController.create);
     this.router.put('/:id', UnitsController.update);
     this.router.delete('/:id', UnitsController.delete);
     return this.router;

@@ -1,10 +1,11 @@
 import { createContext } from 'react'
+import { Company } from '../views/Admin/Companys'
 
 export type User = {
   name: string
   username: string
-  company: string
-  permissions?: string[]
+  company?: string
+  relation?: Company
 }
 
 interface AuthContextData {

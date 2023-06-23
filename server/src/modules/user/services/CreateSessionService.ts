@@ -7,9 +7,6 @@ import { BadRequest } from '@/errors/BadRequest';
 import { User } from '@user/infra/schema/User';
 import { comparePasswords } from '@user/infra/middleware/comparePasswords';
 import { AuthenticateUserDTO } from '@user/infra/dtos/AuthenticateDTO';
-import { SessionUserDTO } from '@user/infra/dtos/SessionUserDTO';
-import { getDataSource } from '@/connection/AppDataSource';
-import { Company } from '@company/infra/schema/Company';
 import { getAdminPermissions } from '@user/infra/middleware/getAdminPermissions';
 import { getUserPermissions } from '@user/infra/middleware/getUserPermissions';
 
@@ -25,6 +22,9 @@ export class CreateSessionService {
 
     const user = await this.userRepository.findOne({ where: { username } });
     if (!user) {
+      throw new UnauthorizedError('Credenciais inválidas');
+    }
+    if (!user.password) {
       throw new UnauthorizedError('Credenciais inválidas');
     }
     if (!(await comparePasswords(password, user.password))) {

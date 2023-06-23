@@ -916,6 +916,10 @@ video {
   border-top-width: 0px;
 }
 
+.border-b {
+  border-bottom-width: 1px;
+}
+
 .border-solid {
   border-style: solid;
 }
@@ -1076,6 +1080,10 @@ video {
 
 .p-8 {
   padding: 2rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
 }
 
 .px-3 {
@@ -1369,6 +1377,16 @@ video {
 
 .ease-linear {
   transition-timing-function: linear;
+}
+
+.marker\:bg-gray-50 *::marker {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+}
+
+.marker\:bg-gray-50::marker {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
 .hover\:scale-105:hover {

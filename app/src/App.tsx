@@ -3,14 +3,12 @@ import { AuthContext, User } from './context/AuthContext'
 import { Auth } from './views/Auth'
 import { Admin } from './views/Admin'
 import { ApiClient } from './services/ApiClient'
-
 type loginResponse = {
   accessToken: string
   refreshToken: string
   user: User
   permissions: string[]
 }
-
 function App() {
   const [user, setUser] = useState<User | null>(null)
   const [permissions, setPermissions] = useState<string[]>([])
@@ -18,6 +16,7 @@ function App() {
   const [apiclient] = useState(
     new ApiClient(import.meta.env.VITE_API_URL as string)
   )
+
   const login = async (username: string, password: string) => {
     try {
       const { accessToken, refreshToken, user, permissions } =
@@ -30,33 +29,49 @@ function App() {
       apiclient.setRefreshToken(refreshToken)
       localStorage.setItem('user', JSON.stringify(user))
       setUser(user)
+      setError(null)
     } catch (error: any) {
       console.log(error)
       setError('Invalid username or password')
     }
   }
+
   const handleClearError = () => {
     setError(null)
   }
-  const logout = () => {
-    localStorage.removeItem('user')
-    setUser(null)
+
+  const logout = async () => {
+    try {
+      await apiclient.delete('/auth/logout')
+    } catch (error: any) {
+      console.log(error)
+    } finally {
+      localStorage.removeItem('user')
+      setUser(null)
+      setPermissions([])
+      apiclient.clearTokens()
+    }
   }
+
   const loadPermissions = useCallback(async () => {
     try {
       const permissions = (await apiclient.get('/auth/permissions')) as string[]
       setPermissions(permissions)
     } catch (error: any) {
       console.log(error)
+      setError('Failed to load permissions')
     }
   }, [apiclient])
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      const parsedUser = JSON.parse(storedUser)
+      setUser(parsedUser)
+      apiclient.revalidateToken()
       loadPermissions()
     }
-  }, [loadPermissions])
+  }, [loadPermissions, apiclient])
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

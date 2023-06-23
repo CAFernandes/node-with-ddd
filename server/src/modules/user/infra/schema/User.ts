@@ -11,12 +11,12 @@ export class User {
       this._id = new ObjectId();
     }
   }
-
+  relation?: Company | null;
   @ObjectIdColumn()
   _id: ObjectId;
 
   @Column()
-  is_admin: boolean;
+  is_admin?: boolean;
 
   @Column()
   company_id?: string;
@@ -28,7 +28,7 @@ export class User {
   username: string;
 
   @Column()
-  password: string;
+  password?: string;
 
   @Column()
   created_at?: Date;

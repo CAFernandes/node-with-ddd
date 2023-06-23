@@ -28,7 +28,7 @@ export class UnitsController {
       );
       const unit = await createUnitService.execute({
         ...req.body,
-        company_id: req?.user?.company || '',
+        company_id: req?.user?.company || req.params.id,
       });
       return res.status(201).json(unit);
     } catch (error) {
