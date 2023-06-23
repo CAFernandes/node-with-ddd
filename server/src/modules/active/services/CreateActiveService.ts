@@ -4,8 +4,8 @@ import { ICreateActiveDTO } from '@active/infra/dtos/ICreateActiveDTO';
 import { Active } from '@active/infra/schema/Active';
 import { Company } from '@company/infra/schema/Company';
 import { Unit } from '@unit/infra/schema/Unit';
-import { writeFile } from "fs";
-import { resolve } from "path";
+import { writeFile } from 'fs';
+import { resolve } from 'path';
 import { ObjectId, Repository } from 'typeorm';
 
 export class CreateActiveService {
@@ -99,15 +99,22 @@ export class CreateActiveService {
     return null; // Retorna null se a extensão não for encontrada
   }
 
-  private async saveImage(base64String: string, nomeArquivo: string): Promise<void> {
-    const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
-    const buffer = Buffer.from(base64Data, "base64");
+  private async saveImage(
+    base64String: string,
+    nomeArquivo: string
+  ): Promise<void> {
+    const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+    const buffer = Buffer.from(base64Data, 'base64');
 
-    writeFile(resolve(__dirname, '..', '..', '..', "public", nomeArquivo), buffer, (err) => {
-      if (err) {
-        console.error("Erro ao criar arquivo:", err);
-        throw err;
+    writeFile(
+      resolve(__dirname, '..', '..', '..', 'public', nomeArquivo),
+      buffer,
+      err => {
+        if (err) {
+          console.error('Erro ao criar arquivo:', err);
+          throw err;
+        }
       }
-    });
+    );
   }
 }

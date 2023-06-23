@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 import { AuthPayload } from '@user/infra/types/AuthPayload';
+import { AuthenticateRequest } from '@user/infra/types/AuthenticateRequest';
+import { logger } from '@/utils/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default';
 
 export const authenticateToken = async (
-  request: Request,
+  request: AuthenticateRequest,
   res: Response,
   next: NextFunction
 ): Promise<Response | undefined> => {
@@ -26,7 +28,7 @@ export const authenticateToken = async (
       request.user = payload; // Armazena o payload do token na requisição
       next();
     } catch (error) {
-      return res.sendStatus(403); // Token inválido
+      return res.status(401).json(error?.message || ''); // Token inválido
     }
   } else {
     return res.sendStatus(401); // Token não fornecido

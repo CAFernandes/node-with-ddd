@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import { Company } from '@company/infra/schema/Company';
 import { getDataSource } from '@/connection/AppDataSource';
 import { Unit } from '@unit/infra/schema/Unit';
+import { User } from '@user/infra/schema/User';
 
 export class DeleteCompanyService {
   readonly companyRepository: Repository<Company>;
@@ -11,6 +12,7 @@ export class DeleteCompanyService {
   }
   async execute(company: string): Promise<void> {
     await this.removeUnitInCompany(company);
+    await this.removeUsersInCompany(company);
     await this.companyRepository.delete({ _id: new ObjectId(company) });
   }
   private async removeUnitInCompany(company: string): Promise<void> {
@@ -42,6 +44,19 @@ export class DeleteCompanyService {
 
     actives.forEach(async active => {
       await activeRepository.delete({ _id: new ObjectId(active._id) });
+    });
+  }
+  private async removeUsersInCompany(company: string): Promise<void> {
+    const userRepository = await getDataSource().then(dataSource =>
+      dataSource.getMongoRepository(User)
+    );
+    const users = await userRepository.find({
+      where: { company_id: company },
+    });
+    if (!users) return;
+
+    users.forEach(async user => {
+      await userRepository.delete({ _id: new ObjectId(user._id) });
     });
   }
 }

@@ -19,17 +19,17 @@ export class RefreshJwtToken {
       });
     });
     const payload = decoded as AuthPayload;
-    const userId = payload.userId;
-    const companyId = payload.companyId;
+    const id = payload.id;
+    const company = payload.company;
 
     const user = await this.userRepository.findOne({
-      where: { _id: new ObjectId(userId) },
+      where: { _id: new ObjectId(id) },
     });
 
     if (!user) {
       throw new UnauthorizedError('Credenciais inválidas');
     }
 
-    return sign({ userId, companyId }, JWT_SECRET, { expiresIn: '15m' });
+    return sign({ id, company }, JWT_SECRET, { expiresIn: '15m' });
   }
 }

@@ -34,7 +34,7 @@ class App {
    * The constructor function is called when the class is instantiated
    */
   constructor() {
-    console.clear();
+    // console.clear();
     this.app = express();
     this.options = {
       key: readFileSync(resolve(__dirname, 'certs', 'key.pem')),
@@ -60,8 +60,8 @@ class App {
    * This function is used to add the routes to the express app.
    */
   async routes(): Promise<void> {
-    this.app.use('/images', express.static(resolve(__dirname, '..', 'images')))
-    this.app.use('/session', new SessionRouter().routes());
+    this.app.use('/images', express.static(resolve(__dirname, '..', 'images')));
+    this.app.use('/auth', new SessionRouter().routes());
     this.app.use('/user', authenticateToken, new UserRouter().routes());
     this.app.use('/company', authenticateToken, new CompanyRouter().routes());
     this.app.use('/unit', authenticateToken, new UnitRouter().routes());

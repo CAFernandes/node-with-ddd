@@ -6,6 +6,7 @@ import { BadRequest } from '@/errors/BadRequest';
 import { Company } from '@company/infra/schema/Company';
 import { getDataSource } from '@/connection/AppDataSource';
 import { CreateUserDTO } from '@user/infra/dtos/CreateUserDTO';
+import { company_user } from '@user/infra/permissions/company_user';
 
 export class CreateUserService {
   readonly userRepository: Repository<User>;
@@ -27,10 +28,10 @@ export class CreateUserService {
 
     await this.checkIfCompanyExists(company_id);
     await this.checkIfUsernameExists(username, company_id);
-
     return this.userRepository.manager.insert(User, {
       name,
       company_id,
+      is_admin: false,
       username,
       password,
       created_at,

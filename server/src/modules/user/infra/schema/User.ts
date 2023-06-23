@@ -16,7 +16,10 @@ export class User {
   _id: ObjectId;
 
   @Column()
-  company_id: string;
+  is_admin: boolean;
+
+  @Column()
+  company_id?: string;
 
   @Column()
   name: string;
@@ -34,7 +37,7 @@ export class User {
   update_at?: Date;
 
   @Column()
-  refresh_token?: string;
+  refresh_token?: string | null;
 
   @ManyToOne(() => Company, company => company.users)
   company?: Company;

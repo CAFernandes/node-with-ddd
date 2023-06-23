@@ -1,10 +1,12 @@
 import { getDataSource } from '@/connection/AppDataSource';
+import { UnauthorizedError } from '@/errors/UnauthorizedError';
 import { Active } from '@active/infra/schema/Active';
 import { CreateActiveService } from '@active/services/CreateActiveService';
 import { DeleteActiveService } from '@active/services/DeleteActiveService';
 import { ListActiveService } from '@active/services/ListActiveService';
 import { SearchActiveService } from '@active/services/SearchActiveService';
 import { UpdateActiveService } from '@active/services/UpdateActiveService';
+import { AuthenticateRequest } from '@user/infra/types/AuthenticateRequest';
 import { NextFunction, Request, Response } from 'express';
 import { ObjectId, Repository } from 'typeorm';
 
@@ -15,18 +17,21 @@ export class ActiveController {
     );
   }
   static async index(
-    request: Request,
+    request: AuthenticateRequest,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
+      if (!request.user) {
+        throw new UnauthorizedError('Invalid token');
+      }
       const { unit_id } = request.params;
       const listActiveService = new ListActiveService(
         await ActiveController.getRepository()
       );
 
       return response.json(
-        await listActiveService.execute(request?.user?.companyId || '', unit_id)
+        await listActiveService.execute(request?.user?.company || '', unit_id)
       );
     } catch (error) {
       next(error);
@@ -49,17 +54,20 @@ export class ActiveController {
     }
   }
   static async create(
-    request: Request,
+    request: AuthenticateRequest,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
+      if (!request.user) {
+        throw new UnauthorizedError('Invalid token');
+      }
       const createActiveService = new CreateActiveService(
         await ActiveController.getRepository()
       );
       const active = await createActiveService.execute({
         ...request.body,
-        company_id: request?.user?.companyId || '',
+        company_id: request?.user?.company || '',
       });
       return response.json(active);
     } catch (error) {
@@ -67,7 +75,7 @@ export class ActiveController {
     }
   }
   static async update(
-    request: Request,
+    request: AuthenticateRequest,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
@@ -86,7 +94,7 @@ export class ActiveController {
     }
   }
   static async delete(
-    request: Request,
+    request: AuthenticateRequest,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {

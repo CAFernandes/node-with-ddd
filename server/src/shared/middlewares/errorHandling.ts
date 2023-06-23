@@ -1,5 +1,6 @@
 import { AppError } from '@/errors/AppError';
 import { BadRequest } from '@/errors/BadRequest';
+import { NotFound } from '@/errors/NotFound';
 import { UnauthorizedError } from '@/errors/UnauthorizedError';
 import { logger } from '@/utils/logger';
 import { NextFunction, Request, Response } from 'express';
@@ -27,6 +28,8 @@ export const errorHandling = (
   if (err instanceof UnauthorizedError)
     return res.status(err.code).json({ status: 'error', message: err.message });
   if (err instanceof BadRequest)
+    return res.status(err.code).json({ status: 'error', message: err.message });
+  if (err instanceof NotFound)
     return res.status(err.code).json({ status: 'error', message: err.message });
 
   const error = new AppError(500, err.name, err);

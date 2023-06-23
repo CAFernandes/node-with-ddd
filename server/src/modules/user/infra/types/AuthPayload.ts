@@ -1,5 +1,4 @@
 export interface AuthPayload {
-  userId: string;
-  companyId: string;
-  name: string;
+  id: string;
+  company: string;
 }

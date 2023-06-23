@@ -11,6 +11,6 @@
   DATABASE_PORT=your-port-database-open
   HTTPSPORT=your-port-server-https
   HTTPPORT=your-port-server-http
-  REQUEST_INTERCEPT=0|1
-  SAVE_LOGS=0|1
+  REQUEST_INTERCEPT=0 or 1
+  SAVE_LOGS=0 or 1
 ```

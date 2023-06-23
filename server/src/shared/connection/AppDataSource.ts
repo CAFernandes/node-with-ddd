@@ -15,9 +15,7 @@ const AppDataSource = new DataSource({
 
 AppDataSource.initialize()
   .then(async () => {
-    logger.info(
-      'getDataSource() - Connection with database already initialized'
-    );
+    logger.info('Connection with database already initialized');
   })
   .catch(error => logger.fatal(error));
 

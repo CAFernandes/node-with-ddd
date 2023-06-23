@@ -1,7 +1,8 @@
 import { BadRequest } from '@/errors/BadRequest';
 import { IUpdateCompanyDTO } from '@company/infra/dtos/IUpdateCompanyDTO';
 import { Company } from '@company/infra/schema/Company';
-import { ObjectId, Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
+import { Repository } from 'typeorm';
 
 export class UpdateCompanyService {
   constructor(readonly companyRepository: Repository<Company>) {}

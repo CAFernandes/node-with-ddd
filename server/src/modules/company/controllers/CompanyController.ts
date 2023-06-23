@@ -1,12 +1,14 @@
 import { getDataSource } from '@/connection/AppDataSource';
+import { UnauthorizedError } from '@/errors/UnauthorizedError';
 import { Company } from '@company/infra/schema/Company';
 import { CreateCompanyService } from '@company/services/CreateCompanyService';
 import { DeleteCompanyService } from '@company/services/DeleteCompanyService';
 import { ListCompanyService } from '@company/services/ListCompanyService';
 import { SearchCompanyServices } from '@company/services/SearchCompanyServices';
 import { UpdateCompanyService } from '@company/services/UpdateCompanyService';
+import { AuthenticateRequest } from '@user/infra/types/AuthenticateRequest';
 import { NextFunction, Request, Response } from 'express';
-import { ObjectId, Repository } from 'typeorm';
+import { Auth, ObjectId, Repository } from 'typeorm';
 
 export class CompanyController {
   private static async getRepository(): Promise<Repository<Company>> {
@@ -16,7 +18,7 @@ export class CompanyController {
   }
   //* GET /companys - Listar todos os companys cadastrados no sistema (apenas para usuários autenticados - ADMIN)
   public static async index(
-    request: Request,
+    request: AuthenticateRequest,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
@@ -24,7 +26,12 @@ export class CompanyController {
       const listCompanyService = new ListCompanyService(
         await CompanyController.getRepository()
       );
-      return response.json(await listCompanyService.execute());
+      return response.json(
+        await listCompanyService.execute(
+          request?.user?.company || null,
+          request?.user?.id || null
+        )
+      );
     } catch (error) {
       next(error);
     }
@@ -58,16 +65,20 @@ export class CompanyController {
     return response.json(companys);
   }
   public static async update(
-    request: Request,
+    request: AuthenticateRequest,
     response: Response
   ): Promise<Response> {
-    const { name, company_id } = request.body;
+    if (!request.user) {
+      throw new UnauthorizedError('User not found');
+    }
+    const { name } = request.body;
+    const { id } = request.params;
     const updateCompanyService = new UpdateCompanyService(
       await CompanyController.getRepository()
     );
     const company = await updateCompanyService.execute({
       name,
-      company_id: company_id,
+      company_id: id,
     });
     return response.json(company);
   }

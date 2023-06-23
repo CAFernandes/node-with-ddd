@@ -1,8 +1,10 @@
 import { getDataSource } from '@/connection/AppDataSource';
+import { UnauthorizedError } from '@/errors/UnauthorizedError';
 import { Unit } from '@unit/infra/schema/Unit';
 import { CreateUnitService } from '@unit/services/CreateUnitService';
 import { DeleteUnitService } from '@unit/services/DeleteUnitServices';
 import { UpdateUnitService } from '@unit/services/UpdateUnitService';
+import { AuthenticateRequest } from '@user/infra/types/AuthenticateRequest';
 import { NextFunction, Request, Response } from 'express';
 import { ObjectId, Repository } from 'typeorm';
 
@@ -12,37 +14,59 @@ export class UnitsController {
       dataSource.getMongoRepository(Unit)
     );
   }
-  static async create(req: Request, res: Response, next: NextFunction) {
+  static async create(
+    req: AuthenticateRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
+      if (!req.user) {
+        throw new UnauthorizedError('Invalid token');
+      }
       const createUnitService = new CreateUnitService(
         await UnitsController.getRepository()
       );
       const unit = await createUnitService.execute({
         ...req.body,
+        company_id: req?.user?.company || '',
       });
       return res.status(201).json(unit);
     } catch (error) {
       next(error);
     }
   }
-  static async index(req: Request, res: Response, next: NextFunction) {
+  static async index(
+    req: AuthenticateRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
+      if (!req.user) {
+        throw new UnauthorizedError('Invalid token');
+      }
       const unitRepository = await UnitsController.getRepository();
       const units = await unitRepository.find({
-        where: { company_id: req?.user?.companyId || '' },
+        where: { company_id: req?.user?.company || '' },
       });
       return res.status(200).json(units);
     } catch (error) {
       next(error);
     }
   }
-  static async show(req: Request, res: Response, next: NextFunction) {
+  static async show(
+    req: AuthenticateRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
+      if (!req.user) {
+        throw new UnauthorizedError('Invalid token');
+      }
       const unitRepository = await UnitsController.getRepository();
       const unit = await unitRepository.findOne({
         where: {
           _id: new ObjectId(req.params.id),
-          company_id: req?.user?.companyId || '',
+          company_id: req?.user?.company || '',
         },
       });
       res.status(200).json(unit);
@@ -65,14 +89,18 @@ export class UnitsController {
       next(error);
     }
   }
-  static async delete(req: Request, res: Response, next: NextFunction) {
+  static async delete(
+    req: AuthenticateRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
+      if (!req.user) {
+        throw new UnauthorizedError('Invalid token');
+      }
       const unitRepository = await UnitsController.getRepository();
       const deleteUnitService = new DeleteUnitService(unitRepository);
-      await deleteUnitService.execute(
-        req?.user?.companyId || '',
-        req.params.id
-      );
+      await deleteUnitService.execute(req?.user?.company || '', req.params.id);
       return res.status(204).json();
     } catch (error) {
       next(error);

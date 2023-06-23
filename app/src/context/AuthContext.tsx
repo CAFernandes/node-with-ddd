@@ -1,20 +1,20 @@
-import { createContext } from "react";
+import { createContext } from 'react'
 
 export type User = {
-  id: number;
-  name?: string;
-  username: string;
-  password: string;
-};
+  name: string
+  username: string
+  company: string
+  permissions?: string[]
+}
 
 interface AuthContextData {
-  user: User | null;
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
+  user: User | null
+  login: (username: string, password: string) => Promise<void>
+  logout: () => void
 }
 
 export const AuthContext = createContext<AuthContextData>({
   user: null,
   login: () => Promise.resolve(),
-  logout: () => {},
-});
+  logout: () => Promise.resolve(),
+})

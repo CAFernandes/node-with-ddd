@@ -8,8 +8,10 @@ export class SessionRouter {
   }
 
   routes() {
-    this.router.post('/', SessionController.create);
-    this.router.post('/refresh', SessionController.refresh);
+    this.router.get('/permissions', authenticateToken, SessionController.index);
+    this.router.post('/login', SessionController.create);
+    this.router.delete('/logout', authenticateToken, SessionController.delete);
+    this.router.post('/refresh-token', SessionController.refresh);
     return this.router;
   }
 }
