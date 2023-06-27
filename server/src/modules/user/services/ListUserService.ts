@@ -1,4 +1,5 @@
 import { getDataSource } from '@/connection/AppDataSource';
+import { logger } from '@/utils/logger';
 import { Company } from '@company/infra/schema/Company';
 import { ListUserDTO } from '@user/infra/dtos/ListUsersDTO';
 import { User } from '@user/infra/schema/User';
@@ -8,9 +9,8 @@ import { Repository } from 'typeorm';
 export class ListUserService {
   constructor(readonly userRepository: Repository<User>) {}
   async execute(company_id: string): Promise<ListUserDTO[]> {
-    const users = await this.userRepository.find({
-      where: { company_id },
-    });
+    logger.info('ListUserService.execute', { company_id });
+    const users = await this.userRepository.find();
 
     const usersCleared = await Promise.all(
       users.map(async user => {

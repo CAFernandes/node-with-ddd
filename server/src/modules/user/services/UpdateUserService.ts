@@ -2,53 +2,50 @@ import { UpdateUserDTO } from '@user/infra/dtos/UpdateUserDTO';
 import { User } from '@user/infra/schema/User';
 import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
+import { NotFound } from '@/errors/NotFound';
 
 export class UpdateUserService {
-  private readonly acceptedFields = [
-    'name',
-    'username',
-    'password',
-    'updated_at',
-  ];
+  private readonly acceptedFields = ['name', 'username', 'password'];
   readonly userRepository: Repository<User>;
+
   constructor(userRepository: Repository<User>) {
     this.userRepository = userRepository;
   }
+
   async execute(user: UpdateUserDTO): Promise<User> {
-    if (!user.id) throw new Error('User id is required');
-    const id = new ObjectId(user.id);
-    delete user.id;
+    const { id, ...userData } = user;
 
-    const keys = Object.keys(user);
-    if (keys.length === 0) throw new Error('No data to update');
-
-    const isValidField = keys.every(key => this.acceptedFields.includes(key));
-    if (!isValidField) throw new Error('Invalid field');
-
-    await this.checkIfUserExists(id);
-
-    const update_at = new Date();
-    const userToUpdate = await this.findUser(id);
-
-    this.userRepository.merge(userToUpdate, {
-      ...user,
-      update_at,
-    });
-    return await this.userRepository.save(userToUpdate);
-  }
-  private async checkIfUserExists(id: ObjectId): Promise<void> {
-    const user = await this.userRepository.findOne({ where: { _id: id } });
-    if (user) {
-      throw new Error('User already exists');
+    if (!id) {
+      throw new Error('User id is required');
     }
-  }
-  private async findUser(_id: ObjectId): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { _id },
-    });
-    if (!user) {
-      throw new Error('User not found');
+
+    const userId = new ObjectId(id);
+    const keys = Object.keys(userData);
+
+    if (keys.length === 0) {
+      throw new Error('No data to update');
     }
-    return user;
+
+    const isValidFields = keys.every(key => this.acceptedFields.includes(key));
+
+    if (!isValidFields) {
+      throw new Error('Invalid field');
+    }
+
+    const updatedUser = await this.userRepository.findBy({
+      _id: new ObjectId(userId),
+    });
+
+    if (!updatedUser) {
+      throw new NotFound('User not found');
+    }
+
+    const updatedFields = {
+      ...userData,
+      updated_at: new Date(),
+    };
+
+    this.userRepository.merge(updatedUser, updatedFields);
+    return await this.userRepository.save(updatedUser);
   }
 }

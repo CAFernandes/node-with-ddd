@@ -1,9 +1,5 @@
 import { useState } from 'react'
-
-type Company = {
-  id: string
-  name: string
-}
+import { Company } from '../../views/Admin/Companys'
 
 type UserCreateProps = {
   isModalOpen: boolean
@@ -12,7 +8,7 @@ type UserCreateProps = {
   handleConfirm: (userData: UserData) => void
 }
 
-type UserData = {
+export type UserData = {
   name: string
   username: string
   password: string
@@ -63,7 +59,7 @@ export const UserCreate = ({
 
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75'>
-      <div className='bg-white p-8 rounded shadow'>
+      <div className='bg-white p-8 rounded shadow w-80'>
         <h2 className='text-lg font-bold mb-4'>Cadastrar Usuário</h2>
         <input
           type='text'
@@ -71,7 +67,7 @@ export const UserCreate = ({
           value={userData.name}
           onChange={handleChange}
           placeholder='Nome'
-          className='border border-gray-300 rounded px-3 py-2 mb-4'
+          className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
         />
         <input
           type='text'
@@ -79,7 +75,7 @@ export const UserCreate = ({
           value={userData.username}
           onChange={handleChange}
           placeholder='Nome de Usuário'
-          className='border border-gray-300 rounded px-3 py-2 mb-4'
+          className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
         />
         <input
           type='password'
@@ -87,36 +83,36 @@ export const UserCreate = ({
           value={userData.password}
           onChange={handleChange}
           placeholder='Senha'
-          className='border border-gray-300 rounded px-3 py-2 mb-4'
+          className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
         />
         <select
           name='company'
           value={userData.company}
           onChange={handleChange}
-          className='border border-gray-300 rounded px-3 py-2 mb-4'
+          className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
         >
-          <option value=''>Select the company</option>
+          <option value=''>Selecione a empresa</option>
           {companys &&
             companys.map((company) => (
-              <option value={company.id} key={company.id}>
+              <option value={company._id} key={company._id}>
                 {company.name}
               </option>
             ))}
         </select>
-        <div className='flex justify-around'>
+        <div className='flex justify-between'>
           <button
             type='button'
             onClick={handleClose}
             className='bg-red-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded mr-2'
           >
-            Cancel
+            Cancelar
           </button>
           <button
             type='submit'
             className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
             onClick={handleSend}
           >
-            Register
+            Cadastrar
           </button>
         </div>
       </div>

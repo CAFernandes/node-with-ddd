@@ -9,6 +9,8 @@ export class UserRouter {
   routes() {
     logger.info('UserRouter.routes() - Configuring routes');
     this.router.get('/', UsersController.index);
+    this.router.get('/me', UsersController.me);
+    this.router.put('/reset-password', UsersController.resetPassword);
     this.router.post('/', UsersController.create);
     this.router.get('/:id', UsersController.show);
     this.router.put('/:id', UsersController.update);

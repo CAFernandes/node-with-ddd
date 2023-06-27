@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Repository } from 'typeorm';
-import { ObjectId } from 'mongodb';
+import { Auth, ObjectId } from 'mongodb';
 
 import { User } from '@user/infra/schema/User';
 import { getDataSource } from '@/connection/AppDataSource';
@@ -10,6 +10,7 @@ import { hashPassword } from '@user/infra/middleware/hashPassword';
 import { DeleteUserService } from '@user/services/DeleteUserService';
 import { SearchUserService } from '@user/services/SearchUserService';
 import { ListUserService } from '@user/services/ListUserService';
+import { AuthenticateRequest } from '@user/infra/types/AuthenticateRequest';
 
 export class UsersController {
   private static async getRepository(): Promise<Repository<User>> {
@@ -18,11 +19,12 @@ export class UsersController {
     );
   }
   public static async index(
-    request: Request,
+    request: AuthenticateRequest,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
+      if (!request.user) throw new Error('User not found');
       const { company_id } = request.params;
       const listUserService = new ListUserService(
         await UsersController.getRepository()
@@ -38,12 +40,12 @@ export class UsersController {
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
-      const { name, company_id, username, password } = request.body;
+      const { name, company, username, password } = request.body;
       const userRepository = await UsersController.getRepository();
       const createUserService = new CreateUserService(userRepository);
       const user = await createUserService.execute({
         name,
-        company_id,
+        company_id: company,
         username,
         password: await hashPassword(password),
         created_at: new Date(),
@@ -94,6 +96,42 @@ export class UsersController {
       const deleteUserService = new DeleteUserService(usersRepository);
       await deleteUserService.execute(id);
       return response.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async me(
+    request: AuthenticateRequest,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    try {
+      if (!request.user) throw new Error('User not found');
+      const { user } = request;
+      const userRepository = await UsersController.getRepository();
+      const searchUserService = new SearchUserService(userRepository);
+      return response.json(await searchUserService.execute(user.id));
+    } catch (error) {
+      next(error);
+    }
+  }
+  public static async resetPassword(
+    request: AuthenticateRequest,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    try {
+      if (!request.user) throw new Error('User not found');
+      const { user } = request;
+      const { password } = request.body;
+      const userRepository = await UsersController.getRepository();
+      const updateUserService = new UpdateUserService(userRepository);
+      const updatedUser = await updateUserService.execute({
+        id: user.id,
+        password: await hashPassword(password),
+      });
+      return response.json(updatedUser);
     } catch (error) {
       next(error);
     }
