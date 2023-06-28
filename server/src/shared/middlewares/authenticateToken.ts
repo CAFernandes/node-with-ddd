@@ -26,7 +26,7 @@ export const authenticateToken = async (
       const payload = decoded as AuthPayload;
       request.user = payload; // Armazena o payload do token na requisição
       next();
-    } catch (error) {
+    } catch (error: Error | any) {
       logger.error('authenticateToken() - Error', error);
       return res.status(401).json(error?.message || ''); // Token inválido
     }

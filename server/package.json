@@ -5,9 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules -r dotenv/config ./src/server.ts",
+    "start": "node -r tsconfig-paths/register ./dist/server.js",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "pretty": "prettier --write \"./**/*.{ts,json}\"",
-    "lint": "eslint --ext .ts,.json --ignore-path .gitignore ."
+    "lint": "eslint --ext .ts,.json --ignore-path .gitignore .",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",

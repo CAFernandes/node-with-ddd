@@ -1,7 +1,10 @@
 import { Status } from '@active/infra/schema/eStatus';
 
 export interface ICreateActiveDTO {
-  image: string;
+  image: {
+    data: string;
+    name: string;
+  };
   name: string;
   description: string;
   model: string;
