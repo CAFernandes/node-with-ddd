@@ -1,5 +1,6 @@
 import { Active } from '@active/infra/schema/Active';
-import { ObjectId, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 export class SearchActiveService {
   constructor(readonly activeRepository: Repository<Active>) {}

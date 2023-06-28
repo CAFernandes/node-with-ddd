@@ -32,13 +32,14 @@ export class UpdateUserService {
       throw new Error('Invalid field');
     }
 
-    const updatedUser = await this.userRepository.findBy({
+    let updatedUser = await this.userRepository.findBy({
       _id: new ObjectId(userId),
     });
 
     if (!updatedUser) {
       throw new NotFound('User not found');
     }
+    updatedUser = updatedUser[0];
 
     const updatedFields = {
       ...userData,

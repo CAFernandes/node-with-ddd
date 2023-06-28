@@ -1,3 +1,5 @@
+import { NextFunction, Request, Response } from 'express';
+import { Repository } from 'typeorm';
 import { getDataSource } from '@/connection/AppDataSource';
 import { UnauthorizedError } from '@/errors/UnauthorizedError';
 import { Active } from '@active/infra/schema/Active';
@@ -7,8 +9,7 @@ import { ListActiveService } from '@active/services/ListActiveService';
 import { SearchActiveService } from '@active/services/SearchActiveService';
 import { UpdateActiveService } from '@active/services/UpdateActiveService';
 import { AuthenticateRequest } from '@user/infra/types/AuthenticateRequest';
-import { NextFunction, Request, Response } from 'express';
-import { ObjectId, Repository } from 'typeorm';
+import { logger } from '@/utils/logger';
 
 export class ActiveController {
   private static async getRepository(): Promise<Repository<Active>> {
@@ -25,13 +26,12 @@ export class ActiveController {
       if (!request.user) {
         throw new UnauthorizedError('Invalid token');
       }
-      const { unit_id } = request.params;
       const listActiveService = new ListActiveService(
         await ActiveController.getRepository()
       );
-
+      const { unit } = request.params;
       return response.json(
-        await listActiveService.execute(request?.user?.company || '', unit_id)
+        await listActiveService.execute(request?.user?.company, unit)
       );
     } catch (error) {
       next(error);
@@ -69,7 +69,11 @@ export class ActiveController {
         ...request.body,
         company_id: request?.user?.company || '',
       });
-      return response.json(active);
+      return response.json({
+        status: 'success',
+        message: 'Ativo cadastrado com sucesso',
+        id: active.raw.insertedId,
+      });
     } catch (error) {
       next(error);
     }
@@ -81,6 +85,7 @@ export class ActiveController {
   ): Promise<Response | undefined> {
     try {
       const { id } = request.params;
+      logger.info(`Update active ${id}`);
       const activeRepository = await ActiveController.getRepository();
       const updateActiveService = new UpdateActiveService(activeRepository);
       const active = await updateActiveService.execute({

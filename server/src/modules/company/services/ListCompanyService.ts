@@ -1,7 +1,6 @@
 import { getDataSource } from '@/connection/AppDataSource';
 import { BadRequest } from '@/errors/BadRequest';
 import { NotFound } from '@/errors/NotFound';
-import { logger } from '@/utils/logger';
 import { Unit } from '@unit/infra/schema/Unit';
 import { Company } from '@company/infra/schema/Company';
 import { User } from '@user/infra/schema/User';

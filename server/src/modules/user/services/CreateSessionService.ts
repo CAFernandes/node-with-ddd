@@ -1,4 +1,4 @@
-import { sign } from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 import { Repository } from 'typeorm';
 
 import { UnauthorizedError } from '@/errors/UnauthorizedError';
@@ -9,9 +9,10 @@ import { comparePasswords } from '@user/infra/middleware/comparePasswords';
 import { AuthenticateUserDTO } from '@user/infra/dtos/AuthenticateDTO';
 import { getAdminPermissions } from '@user/infra/middleware/getAdminPermissions';
 import { getUserPermissions } from '@user/infra/middleware/getUserPermissions';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'default';
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'default';
+import { Company } from '@company/infra/schema/Company';
+import { getDataSource } from '@/connection/AppDataSource';
+import { createAccessToken } from '@user/infra/middleware/createAccessToken';
+import { createRefreshToken } from '@user/infra/middleware/createRefereshToken';
 
 export class CreateSessionService {
   constructor(readonly userRepository: Repository<User>) {}
@@ -30,16 +31,8 @@ export class CreateSessionService {
     if (!(await comparePasswords(password, user.password))) {
       throw new UnauthorizedError('Credenciais inválidas');
     }
-    const payload = {
-      id: user._id,
-      company: user.company_id,
-    };
-    const accessToken = sign(payload, JWT_SECRET, {
-      expiresIn: '15m',
-    });
-    const refreshToken = sign(payload, REFRESH_TOKEN_SECRET, {
-      expiresIn: '7d',
-    });
+    const accessToken = await createAccessToken(user);
+    const refreshToken = await createRefreshToken(user);
 
     user.refresh_token = refreshToken;
     await this.userRepository.save(user);
@@ -51,8 +44,20 @@ export class CreateSessionService {
     const userResponse = {
       name: user.name,
       username: user.username,
-      company: user.company_id,
+      relation: await this.getInfoCompany(user?.company_id || ''),
     };
     return { accessToken, refreshToken, user: userResponse, permissions };
+  }
+  private async getInfoCompany(company_id: string): Promise<Company | null> {
+    if (!company_id) return null;
+
+    const companyRepository = await getDataSource().then(dataSource =>
+      dataSource.getRepository(Company)
+    );
+    const company = await companyRepository.findOne({
+      where: { _id: new ObjectId(company_id) },
+    });
+    if (!company) return null;
+    return company;
   }
 }

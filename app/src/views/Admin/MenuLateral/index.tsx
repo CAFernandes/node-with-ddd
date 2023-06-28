@@ -15,8 +15,10 @@ export const MenuLateral = ({
   return (
     <section className='bg-gray-200 w-fit p-4 whitespace-nowrap flex flex-col justify-center gap-8'>
       <header className='flex flex-col items-center'>
-        Welcome!
-        <p className='text-xl font-bold'>{user?.name}</p>
+        <p className='text-xl font-bold text-gray-600'>
+          {user?.relation?.name}
+        </p>
+        <p className='text-xl font-bold'>Welcome! {user?.name}</p>
       </header>
       <main className='flex flex-col flex-1'>
         <div className='flex flex-col flex-1 justify-center'>

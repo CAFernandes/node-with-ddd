@@ -13,7 +13,16 @@ export type AdminProps = {
 }
 
 export const Admin = ({ permissions, apiclient }: AdminProps) => {
-  const views = ['Home', 'Companys', 'Units', 'Actives', 'Users']
+  let views = ['Home', 'Companys', 'Units', 'Actives', 'Users']
+  if (!permissions.includes('company:create')) {
+    views = views.filter((view) => view !== 'Companys')
+  }
+  if (!permissions.includes('active:create')) {
+    views = views.filter((view) => view !== 'Actives')
+  }
+  if (!permissions.includes('unit:create')) {
+    views = views.filter((view) => view !== 'Units')
+  }
   const [activeView, setActiveView] = useState(views[0])
   return (
     <main className='grid grid-cols-[min-content_1fr] h-screen'>

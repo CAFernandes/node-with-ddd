@@ -34,10 +34,12 @@ export const UserProfile = ({
           <span className='font-bold'>Nome de Usuário: </span>
           {userData.username}
         </div>
-        <div className='mb-2'>
-          <span className='font-bold'>Empresa: </span>
-          {userData?.relation?.name}
-        </div>
+        {userData?.relation?._id && (
+          <div className='mb-2'>
+            <span className='font-bold'>Empresa: </span>
+            {userData?.relation?.name}
+          </div>
+        )}
         <div className='mb-2'>
           <span className='font-bold'>Data de Criação: </span>
           {new Date(userData.created_at).toLocaleString()}

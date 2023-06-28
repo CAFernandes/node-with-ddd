@@ -8,7 +8,8 @@ export class ActiveRouter {
   }
   routes() {
     this.router.get('/', ActiveController.index);
-    this.router.get('/:id', ActiveController.show);
+    this.router.get('/:unit', ActiveController.index);
+    this.router.get('/:unit/:id', ActiveController.show);
     this.router.post('/', ActiveController.create);
     this.router.put('/:id', ActiveController.update);
     this.router.delete('/:id', ActiveController.delete);

@@ -1,6 +1,6 @@
 import { Entity, ObjectIdColumn, Column, ManyToOne } from 'typeorm';
-import { Company } from '@company/infra/schema/Company';
 import { ObjectId } from 'mongodb';
+import { Company } from '@company/infra/schema/Company';
 
 @Entity('users')
 export class User {

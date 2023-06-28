@@ -2,6 +2,8 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import https from 'https';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import 'reflect-metadata';
 
 import { logger } from '@/utils/logger';
@@ -13,8 +15,6 @@ import { loggerRequest } from '@middlewares/loggerRequest';
 import { UnitRouter } from '@unit/routers/UnitRouter';
 import { SessionRouter } from '@user/routers/SessionRouter';
 import { UserRouter } from '@user/routers/UserRouter';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
 import { createDatabaseAndCollections } from './services/createDatabaseAndCollections';
 
 type TlsOptions = {
@@ -43,24 +43,34 @@ class App {
       passphrase: '281296',
     };
     this.middleware();
-    this.routes();
   }
   /**
    * This function is used to set up the middleware for the express server
    */
   middleware(): void {
     createDatabaseAndCollections();
-    this.app.use(helmet());
-    this.app.use(cors());
+    this.app.use(
+      helmet({
+        contentSecurityPolicy: true,
+        crossOriginResourcePolicy: { policy: 'cross-origin' },
+      })
+    );
+    this.app.use(
+      cors({
+        origin: 'http://localhost:5173',
+      })
+    );
     this.app.use(express.json({ limit: '25mb' }));
     this.app.use(express.urlencoded({ limit: '25mb', extended: true }));
     if (process.env.REQUEST_INTERCEPT) this.app.use(loggerRequest);
+
+    this.routes();
   }
   /**
    * This function is used to add the routes to the express app.
    */
   async routes(): Promise<void> {
-    this.app.use('/images', express.static(resolve(__dirname, '..', 'images')));
+    this.app.use('/image', express.static(resolve('public')));
     this.app.use('/auth', new SessionRouter().routes());
     this.app.use('/user', authenticateToken, new UserRouter().routes());
     this.app.use('/company', authenticateToken, new CompanyRouter().routes());

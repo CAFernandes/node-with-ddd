@@ -9,8 +9,12 @@ import { Repository } from 'typeorm';
 export class ListUserService {
   constructor(readonly userRepository: Repository<User>) {}
   async execute(company_id: string): Promise<ListUserDTO[]> {
-    logger.info('ListUserService.execute', { company_id });
-    const users = await this.userRepository.find();
+    let users: User[] = [];
+    if (company_id) {
+      users = await this.getUserByCompany(company_id);
+    } else {
+      users = await this.getListUsers();
+    }
 
     const usersCleared = await Promise.all(
       users.map(async user => {
@@ -24,6 +28,17 @@ export class ListUserService {
       })
     );
     return usersCleared;
+  }
+  private async getUserByCompany(company_id: string): Promise<User[]> {
+    if (!company_id) return [];
+    const users = await this.userRepository.find({
+      where: { company_id: company_id },
+    });
+    return users;
+  }
+  private async getListUsers(): Promise<User[]> {
+    const users = await this.userRepository.find();
+    return users;
   }
   private async getInfoCompany(company_id: string): Promise<Company | null> {
     if (!company_id) return null;

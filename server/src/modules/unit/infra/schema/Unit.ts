@@ -9,7 +9,7 @@ import {
 import { Company } from '@company/infra/schema/Company';
 import { Active } from '@active/infra/schema/Active';
 
-@Entity('unities')
+@Entity('units')
 export class Unit {
   @ObjectIdColumn()
   _id: ObjectId;

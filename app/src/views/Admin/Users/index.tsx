@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { AdminProps } from '..'
 import { CardSettings } from '../../../components/Cards/CardSettings'
 import { Company } from '../Companys'
 import { UserCreate, UserData } from '../../../components/Modal/UserCreate'
-import { User } from '../../../context/AuthContext'
+import { AuthContext, User } from '../../../context/AuthContext'
 import { UserEditModal } from '../../../components/Modal/UserEditModal'
 
 type lUser = {
@@ -14,15 +14,18 @@ type lUser = {
 }
 
 export const Users = ({ permissions, apiclient }: AdminProps) => {
+  const { user } = useContext(AuthContext)
   const [users, setUsers] = useState<User[]>([])
   const [companys, setCompanys] = useState<Company[]>([])
   const [isModalCreateUserOpen, setIsModalCreateUserOpen] = useState(false)
   const [isModalEditUserOpen, setIsModalEditUserOpen] = useState(false)
   const [userData, setUserData] = useState<User | null>(null)
   const loadCompanys = useCallback(async () => {
+    if (user?.relation) return setCompanys([user.relation])
+
     const companys: Company[] = await apiclient.get('/company')
     setCompanys(companys)
-  }, [apiclient])
+  }, [apiclient, user?.relation])
   const loadUsers = useCallback(async () => {
     const users: lUser[] = await apiclient.get('/user')
     setUsers(users)
@@ -64,11 +67,11 @@ export const Users = ({ permissions, apiclient }: AdminProps) => {
     }
   }
   useEffect(() => {
-    loadCompanys()
     loadUsers()
+    loadCompanys()
   }, [loadCompanys, loadUsers])
   return (
-    <div className='relative pb-32 pt-12'>
+    <>
       <CardSettings
         permissions={permissions}
         users={users}
@@ -91,6 +94,6 @@ export const Users = ({ permissions, apiclient }: AdminProps) => {
         }}
         userData={userData}
       />
-    </div>
+    </>
   )
 }

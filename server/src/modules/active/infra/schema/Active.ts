@@ -2,7 +2,7 @@ import { Entity, ObjectIdColumn, Column, ManyToOne, ObjectId } from 'typeorm';
 import { Unit } from '@unit/infra/schema/Unit';
 import { Status } from './eStatus';
 
-@Entity('active')
+@Entity('actives')
 export class Active {
   @ObjectIdColumn()
   _id: ObjectId;

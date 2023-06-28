@@ -66,11 +66,13 @@ export class SessionController {
     next: NextFunction
   ): Promise<Response | undefined> {
     try {
+      console.log(request.body);
       const { refreshToken } = request.body;
       const refreshService = new RefreshJwtToken(
         await SessionController.getRepository()
       );
       const accessToken = await refreshService.execute(refreshToken);
+      console.log(accessToken);
       return response.json({ accessToken });
     } catch (error) {
       next(error);

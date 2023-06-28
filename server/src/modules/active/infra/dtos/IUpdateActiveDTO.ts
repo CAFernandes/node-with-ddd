@@ -6,4 +6,6 @@ export interface IUpdateActiveDTO {
   company_id: string;
   status: Status;
   health_level: number;
+  model: string;
+  description: string;
 }

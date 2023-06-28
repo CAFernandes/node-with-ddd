@@ -7,7 +7,7 @@ import { DataSource } from 'typeorm';
 
 const AppDataSource = new DataSource({
   type: 'mongodb',
-  url: `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE}?authSource=admin`,
+  url: `${process.env.uri}${process.env.user}:${process.env.pass}@${process.env.host}/${process.env.DATABASE}?authSource=admin`,
 
   entities: [Company, Unit, User, Active],
   subscribers: [],

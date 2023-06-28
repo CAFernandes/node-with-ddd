@@ -3,10 +3,13 @@ import { UnauthorizedError } from '@/errors/UnauthorizedError';
 import { Unit } from '@unit/infra/schema/Unit';
 import { CreateUnitService } from '@unit/services/CreateUnitService';
 import { DeleteUnitService } from '@unit/services/DeleteUnitServices';
+import { ListUnitsService } from '@unit/services/ListUnitServices';
 import { UpdateUnitService } from '@unit/services/UpdateUnitService';
 import { AuthenticateRequest } from '@user/infra/types/AuthenticateRequest';
 import { NextFunction, Request, Response } from 'express';
-import { ObjectId, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
+import { logger } from '@/utils/logger';
 
 export class UnitsController {
   private static async getRepository(): Promise<Repository<Unit>> {
@@ -28,7 +31,7 @@ export class UnitsController {
       );
       const unit = await createUnitService.execute({
         ...req.body,
-        company_id: req?.user?.company || req.params.id,
+        company_id: req?.user?.company,
       });
       return res.status(201).json(unit);
     } catch (error) {
@@ -44,10 +47,13 @@ export class UnitsController {
       if (!req.user) {
         throw new UnauthorizedError('Invalid token');
       }
-      const unitRepository = await UnitsController.getRepository();
-      const units = await unitRepository.find({
-        where: { company_id: req?.user?.company || '' },
-      });
+      logger.info(req.user);
+      const listUnitsService = new ListUnitsService(
+        await UnitsController.getRepository()
+      );
+      const units = await listUnitsService.execute(
+        req?.user?.company || (req.query.company as string)
+      );
       return res.status(200).json(units);
     } catch (error) {
       next(error);

@@ -46,10 +46,10 @@ function App() {
     } catch (error: any) {
       console.log(error)
     } finally {
-      localStorage.removeItem('user')
       setUser(null)
       setPermissions([])
       apiclient.clearTokens()
+      location.reload()
     }
   }
 
@@ -68,7 +68,6 @@ function App() {
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser)
       setUser(parsedUser)
-      apiclient.revalidateToken()
       loadPermissions()
     }
   }, [loadPermissions, apiclient])

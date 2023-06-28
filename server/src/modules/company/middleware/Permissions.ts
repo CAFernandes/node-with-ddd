@@ -1,27 +1,31 @@
 export const adminPermissions = [
   //! permissões para empresas
-  'create:company', //? (Criar empresa)
-  'read:company', //? (Ler informações da empresa)
-  'update:company', //? (Atualizar informações da empresa)
-  'delete:company', //? (Excluir empresa)
+  'company:create', //? (Criar empresa)
+  'company:read', //? (Ler informações da empresa)
+  'company:update', //? (Atualizar informações da empresa)
+  'company:delete', //? (Excluir empresa)
+  //! permissões para unidades da empresa
+  // 'unit:create', //? (Criar unidade da empresa)
+  // 'unit:read', //? (Ler informações da unidade da empresa)
+  // 'unit:update', //? (Atualizar informações da unidade da empresa)
+  // 'unit:delete', //? (Atualizar informações da unidade da empresa)
   //! permissões para usuários
-  'create:company-user', //? (Criar usuário da empresa)
-  'read:company-user', //? (Ler informações do usuário da empresa)
-  'update:company-user', //? (Atualizar informações do usuário da empresa)
-  'delete:company-user', //? (Excluir usuário da empresa)
+  'user:create', //? (Criar usuário da empresa)
+  'user:read', //? (Ler informações do usuário da empresa)
+  'user:update', //? (Atualizar informações do usuário da empresa)
+  'user:delete', //? (Excluir usuário da empresa)
 ];
 export const userCompanyPermissions = [
   //! permissões para empresas
-  'read:company', //? (Ler informações da empresa)
-  'read:company-user', //? (Ler informações do usuário da empresa)
-  'update:company-user', //? (Atualizar informações do usuário da empresa)
+  'company:read', //? (Ler informações da empresa)
   //! permissões para unidades da empresa
-  'create:company-unit', //? (Criar unidade da empresa)
-  'read:company-unit', //? (Ler informações da unidade da empresa)
-  'update:company-unit', //? (Atualizar informações da unidade da empresa)
+  'unit:create', //? (Criar unidade da empresa)
+  'unit:read', //? (Ler informações da unidade da empresa)
+  'unit:update', //? (Atualizar informações da unidade da empresa)
+  'unit:delete', //? (Atualizar informações da unidade da empresa)
   //! permissões para ativos da unidade da empresa
-  'create:unit-active', //? (Criar ativo da unidade da empresa)
-  'read:unit-active', //? (Ler informações do ativo da unidade da empresa)
-  'update:unit-active', //? (Atualizar informações do ativo da unidade da empresa)
-  'delete:unit-active', //? (Excluir ativo da unidade da empresa)
+  'active:create', //? (Criar ativo da unidade da empresa)
+  'active:read', //? (Ler informações do ativo da unidade da empresa)
+  'active:update', //? (Atualizar informações do ativo da unidade da empresa)
+  'active:delete', //? (Excluir ativo da unidade da empresa)
 ];

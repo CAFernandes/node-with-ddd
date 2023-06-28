@@ -12,10 +12,8 @@ export const authenticateToken = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   const authHeader = request.headers.authorization;
-  logger.info('authenticateToken() - Verifying token', authHeader);
   if (authHeader) {
     const token = authHeader.split(' ')[1];
-    logger.info('authenticateToken() - Token', token);
     try {
       let decoded = await new Promise((resolve, reject) => {
         verify(token, JWT_SECRET, (err: any, decoded: any) => {

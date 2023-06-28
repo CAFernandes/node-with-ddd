@@ -7,7 +7,7 @@ import { createUserAdministrator } from './createUserAdministrator';
 
 export const createDatabaseAndCollections = async () => {
   const dbName = process.env.DATABASE;
-  const mongoUrl = `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}`;
+  const mongoUrl = `${process.env.uri}${process.env.user}:${process.env.pass}@${process.env.host}?retryWrites=true&w=majority`;
   logger.debug(`Connecting to ${mongoUrl}`);
   const client = await MongoClient.connect(mongoUrl);
 

@@ -161,4 +161,4 @@ dist
 .ionide
 
 
-app/notus-react-main
+server/public/*

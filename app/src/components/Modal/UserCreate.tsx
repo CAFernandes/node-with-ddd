@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Company } from '../../views/Admin/Companys'
 
 type UserCreateProps = {
@@ -27,6 +27,12 @@ export const UserCreate = ({
     password: '',
     company: '',
   })
+
+  useEffect(() => {
+    if (companys.length === 1) {
+      setUserData((prevData) => ({ ...prevData, company: companys[0]._id }))
+    }
+  }, [companys])
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -58,64 +64,66 @@ export const UserCreate = ({
   if (!isModalOpen) return null
 
   return (
-    <div className='fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75'>
-      <div className='bg-white p-8 rounded shadow w-80'>
-        <h2 className='text-lg font-bold mb-4'>Cadastrar Usuário</h2>
-        <input
-          type='text'
-          name='name'
-          value={userData.name}
-          onChange={handleChange}
-          placeholder='Nome'
-          className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
-        />
-        <input
-          type='text'
-          name='username'
-          value={userData.username}
-          onChange={handleChange}
-          placeholder='Nome de Usuário'
-          className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
-        />
-        <input
-          type='password'
-          name='password'
-          value={userData.password}
-          onChange={handleChange}
-          placeholder='Senha'
-          className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
-        />
-        <select
-          name='company'
-          value={userData.company}
-          onChange={handleChange}
-          className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
-        >
-          <option value=''>Selecione a empresa</option>
-          {companys &&
-            companys.map((company) => (
-              <option value={company._id} key={company._id}>
-                {company.name}
-              </option>
-            ))}
-        </select>
-        <div className='flex justify-between'>
-          <button
-            type='button'
-            onClick={handleClose}
-            className='bg-red-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded mr-2'
+    <>
+      <div className='fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75'>
+        <div className='bg-white p-8 rounded shadow w-80'>
+          <h2 className='text-lg font-bold mb-4'>Cadastrar Usuário</h2>
+          <input
+            type='text'
+            name='name'
+            value={userData.name}
+            onChange={handleChange}
+            placeholder='Nome'
+            className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
+          />
+          <input
+            type='text'
+            name='username'
+            value={userData.username}
+            onChange={handleChange}
+            placeholder='Nome de Usuário'
+            className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
+          />
+          <input
+            type='password'
+            name='password'
+            value={userData.password}
+            onChange={handleChange}
+            placeholder='Senha'
+            className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
+          />
+          <select
+            name='company'
+            value={userData.company}
+            onChange={handleChange}
+            className='border border-gray-300 rounded px-3 py-2 mb-4 w-full'
           >
-            Cancelar
-          </button>
-          <button
-            type='submit'
-            className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
-            onClick={handleSend}
-          >
-            Cadastrar
-          </button>
+            <option value=''>Selecione a empresa</option>
+            {companys &&
+              companys.map((company) => (
+                <option value={company._id} key={company._id}>
+                  {company.name}
+                </option>
+              ))}
+          </select>
+          <div className='flex justify-between'>
+            <button
+              type='button'
+              onClick={handleClose}
+              className='bg-red-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded mr-2'
+            >
+              Cancelar
+            </button>
+            <button
+              type='submit'
+              className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
+              onClick={handleSend}
+            >
+              Cadastrar
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

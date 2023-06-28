@@ -1,39 +1,53 @@
-import { useState } from 'react'
-import { CardTableActives } from '../../../components/Cards/CardTableActives'
+import { useCallback, useEffect, useState } from 'react'
 import { UnitsDelete } from '../../../components/Modal/UnitsDelete'
-import { UnitsSee } from '../../../components/Modal/UnitsSee'
 import { AdminProps } from '..'
+import { UnitsCreate } from '../../../components/Modal/UnitsCreate'
+import { CardTableUnits } from '../../../components/Cards/CardTableUnits'
+import { UnitsEdit } from '../../../components/Modal/UnitsEdit'
+
+export type Unit = {
+  _id: string
+  name: string
+  company_id: string
+  created_at: string
+  updated_at?: string
+}
 
 export const Units = ({ permissions, apiclient }: AdminProps) => {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
   const [isModalSeeOpen, setIsModalSeeOpen] = useState(false)
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false)
+  const [units, setUnits] = useState<Unit[]>([])
+  const [row, setRow] = useState<Unit | null>(null)
+  const columns = ['Name', 'Total Actives', 'Actions']
 
-  const [row, setRow] = useState({} as any)
-  const columns = [
-    'Active',
-    'Model',
-    'Proprietary',
-    'Status',
-    'Health Level',
-    'Last Update',
-    'Actions',
-  ]
-  const state = ['Alerta', 'Parado', 'Em Execução']
-  const rows = [
-    {
-      0: Date.now().toString(),
-      1: 'Primeiro Ativo',
-      2: 'ferrari',
-      3: 'Joe Doe',
-      4: state[Math.floor(Math.random() * 3)],
-      5: Math.floor(Math.random() * 100),
-      6: Date.now(),
-    },
-  ]
+  const getUnits = useCallback(async () => {
+    const result: Unit[] = await apiclient.get(`/unit`)
+    setUnits(result)
+  }, [apiclient])
+  useEffect(() => {
+    getUnits()
+  }, [getUnits])
 
-  const handleOpenDeleteModal = (id: string) => {
-    setIsModalDeleteOpen(true)
+  const handleOpenCreateModal = () => {
+    setIsModalCreateOpen(true)
   }
+  const handleCloseCreateModal = () => {
+    setIsModalCreateOpen(false)
+  }
+  const handleConfirmCreateModal = async (name: string) => {
+    try {
+      await apiclient.post('/unit', {
+        name,
+      })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      getUnits()
+      setIsModalCreateOpen(false)
+    }
+  }
+
   const handleCloseDeleteModal = () => {
     setIsModalDeleteOpen(false)
   }
@@ -41,40 +55,59 @@ export const Units = ({ permissions, apiclient }: AdminProps) => {
     console.log('Confirmação realizada com sucesso!')
     setIsModalDeleteOpen(false)
   }
-
-  const handleCloseSeeModal = () => {
-    setIsModalSeeOpen(false)
+  const handleRemove = async (id: string) => {
+    try {
+      await apiclient.delete(`/unit/${id}`)
+      getUnits()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  const handleEdit = (id: string) => {
-    const searchedRow = rows.filter((active) => active[0] == id)
-    setRow(searchedRow[0])
-    console.log('edit', id)
-  }
-  const handleSee = (id: string) => {
-    const searchedRow = rows.filter((active) => active[0] == id)
+  const handleEdit = (unit: Unit) => {
+    setRow(unit)
     setIsModalSeeOpen(true)
-    setRow(searchedRow[0])
-    console.log('see', id)
   }
-
+  const handleConfirmEditModal = async (name: string) => {
+    try {
+      await apiclient.put(`/unit/${row?._id}`, {
+        name,
+      })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      getUnits()
+      setRow(null)
+      setIsModalSeeOpen(false)
+    }
+  }
   return (
-    <div>
-      <h1 className='text-4xl font-bold'>Units</h1>
-      <div className='relative pb-32 pt-12'>
-        <CardTableActives
+    <>
+      <div className='flex items-center justify-between'>
+        <h1 className='text-4xl font-bold'>Units</h1>
+        {permissions.includes('unit:create') && (
+          <button
+            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded'
+            onClick={handleOpenCreateModal}
+          >
+            Add <i className='fas fa-plus'></i>
+          </button>
+        )}
+      </div>
+      <div className='relative pb-32 pt-12 overflow-auto'>
+        <CardTableUnits
           color='light'
-          title='Actives'
           columns={columns}
-          rows={rows}
-          onSee={handleSee}
-          onDelete={handleOpenDeleteModal}
+          title='Resume'
+          units={units}
           onEdit={handleEdit}
+          onDelete={handleRemove}
         />
-        <UnitsSee
-          isOpen={isModalSeeOpen}
-          onClose={handleCloseSeeModal}
-          row={row}
+        <UnitsEdit
+          name={row?.name || ''}
+          isModalOpen={isModalSeeOpen}
+          handleClose={() => setIsModalSeeOpen(false)}
+          handleConfirm={handleConfirmEditModal}
         />
         <UnitsDelete
           message='Are you sure you want to delete this unit?'
@@ -82,7 +115,12 @@ export const Units = ({ permissions, apiclient }: AdminProps) => {
           onClose={handleCloseDeleteModal}
           onConfirm={handleConfirmDeleteModal}
         />
+        <UnitsCreate
+          isOpen={isModalCreateOpen}
+          onClose={handleCloseCreateModal}
+          onConfirm={handleConfirmCreateModal}
+        />
       </div>
-    </div>
+    </>
   )
 }

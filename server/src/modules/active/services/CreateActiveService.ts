@@ -6,7 +6,8 @@ import { Company } from '@company/infra/schema/Company';
 import { Unit } from '@unit/infra/schema/Unit';
 import { writeFile } from 'fs';
 import { resolve } from 'path';
-import { ObjectId, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 export class CreateActiveService {
   constructor(readonly activeRepository: Repository<Active>) {}
@@ -37,8 +38,11 @@ export class CreateActiveService {
     await this.checkIfUnitExists(unit_id);
     await this.checkIfCompanyExist(company_id);
     await this.checkIfActiveExists(name, unit_id, company_id);
-    const image_name = `${Date.now()}-${name}.${this.getImageExtension(image)}`;
-    this.saveImage(image, image_name);
+    const image_name = `${Date.now()}-${name}.${this.getImageExtension(
+      image.data
+    )}`;
+    this.saveImage(image.data, image_name);
+    const created_at = new Date();
     return this.activeRepository.manager.insert(Active, {
       image: image_name,
       name,
@@ -49,6 +53,7 @@ export class CreateActiveService {
       health_level,
       company_id,
       unit_id,
+      created_at,
     });
   }
   private async checkIfActiveExists(
@@ -71,7 +76,9 @@ export class CreateActiveService {
     const unitsRepository = await getDataSource().then(dataSource =>
       dataSource.getMongoRepository(Unit)
     );
-    const unit = await unitsRepository.findOne({ where: { unit_id } });
+    const unit = await unitsRepository.findOne({
+      where: { _id: new ObjectId(unit_id) },
+    });
     if (!unit) {
       throw new BadRequest('Unidade não encontrada');
     }
@@ -106,15 +113,11 @@ export class CreateActiveService {
     const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64Data, 'base64');
 
-    writeFile(
-      resolve(__dirname, '..', '..', '..', 'public', nomeArquivo),
-      buffer,
-      err => {
-        if (err) {
-          console.error('Erro ao criar arquivo:', err);
-          throw err;
-        }
+    writeFile(resolve('public', nomeArquivo), buffer, err => {
+      if (err) {
+        console.error('Erro ao criar arquivo:', err);
+        throw err;
       }
-    );
+    });
   }
 }

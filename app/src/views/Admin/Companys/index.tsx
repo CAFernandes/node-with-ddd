@@ -95,7 +95,7 @@ export const Companys = ({ permissions, apiclient }: AdminProps) => {
           </button>
         )}
       </div>
-      <div className='relative pb-32 pt-12'>
+      <div className='relative pb-32 pt-12 overflow-auto'>
         <CardTableCompanies
           color='light'
           columns={columns}

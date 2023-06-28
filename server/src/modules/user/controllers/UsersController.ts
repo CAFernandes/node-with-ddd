@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { Repository } from 'typeorm';
-import { Auth, ObjectId } from 'mongodb';
 
 import { User } from '@user/infra/schema/User';
 import { getDataSource } from '@/connection/AppDataSource';
@@ -25,7 +24,8 @@ export class UsersController {
   ): Promise<Response | undefined> {
     try {
       if (!request.user) throw new Error('User not found');
-      const { company_id } = request.params;
+
+      const company_id = request.user.company;
       const listUserService = new ListUserService(
         await UsersController.getRepository()
       );

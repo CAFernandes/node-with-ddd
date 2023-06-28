@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongodb';
-
 export type CreateUserDTO = {
   name: string;
   company_id: string;

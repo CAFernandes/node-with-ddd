@@ -1,7 +1,8 @@
 import { BadRequest } from '@/errors/BadRequest';
 import { IUpdateUnitDTO } from '@unit/infra/dtos/IUpdateUnitDTO';
 import { Unit } from '@unit/infra/schema/Unit';
-import { ObjectId, Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 export class UpdateUnitService {
   constructor(readonly unitRepository: Repository<Unit>) {}

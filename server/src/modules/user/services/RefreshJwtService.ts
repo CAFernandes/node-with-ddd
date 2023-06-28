@@ -5,8 +5,8 @@ import { sign, verify } from 'jsonwebtoken';
 import { User } from '@user/infra/schema/User';
 import { AuthPayload } from '@user/infra/types/AuthPayload';
 import { UnauthorizedError } from '@/errors/UnauthorizedError';
+import { createAccessToken } from '@user/infra/middleware/createAccessToken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'default';
 
 export class RefreshJwtToken {
@@ -18,9 +18,9 @@ export class RefreshJwtToken {
         resolve(decoded);
       });
     });
+
     const payload = decoded as AuthPayload;
     const id = payload.id;
-    const company = payload.company;
 
     const user = await this.userRepository.findOne({
       where: { _id: new ObjectId(id) },
@@ -30,6 +30,6 @@ export class RefreshJwtToken {
       throw new UnauthorizedError('Credenciais inválidas');
     }
 
-    return sign({ id, company }, JWT_SECRET, { expiresIn: '15m' });
+    return await createAccessToken(user);
   }
 }

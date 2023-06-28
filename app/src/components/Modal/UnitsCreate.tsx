@@ -1,51 +1,44 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-type CompanyCreateProps = {
-  name: string
-  isModalOpen: boolean
-  handleClose: () => void
-  handleConfirm: (name: string) => Promise<void>
+type UnitsCreateProp = {
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: (name: string) => void
 }
 
-export const UnitsEdit = ({
-  name: initialName,
-  isModalOpen,
-  handleClose,
-  handleConfirm,
-}: CompanyCreateProps) => {
+export const UnitsCreate = ({
+  isOpen,
+  onClose,
+  onConfirm,
+}: UnitsCreateProp) => {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
-
-  useEffect(() => {
-    setName(initialName)
-    setError('')
-  }, [initialName, isModalOpen])
   const handleSend = () => {
     if (!name) {
-      setError('Name is required')
+      setError('Nome é obrigatório')
       return
     }
-    handleConfirm(name)
+    onConfirm(name)
     setName('')
   }
 
-  if (!isModalOpen) return null
+  if (!isOpen) return null
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75'>
       <div className='bg-white p-8 rounded shadow'>
-        <h2 className='text-lg font-bold mb-4'>Edit Unit</h2>
+        <h2 className='text-lg font-bold mb-4'>New Unit</h2>
         <input
           type='text'
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder='Company'
+          onChange={(event) => setName(event.target.value)}
+          placeholder='Unit name'
           className='border border-gray-300 rounded px-3 py-2 mb-4'
         />
         {error && <p className='text-red-500 mb-4'>{error}</p>}
         <div className='flex justify-around'>
           <button
             type='button'
-            onClick={handleClose}
+            onClick={onClose}
             className='bg-red-500 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded mr-2'
           >
             Cancel

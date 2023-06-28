@@ -1,4 +1,4 @@
-import { Company } from '../../views/Admin/Companys'
+import { Unit } from '../../views/Admin/Units'
 
 type Color = 'light' | 'dark'
 type Column = string[]
@@ -7,16 +7,16 @@ type CardTableProps = {
   color?: Color
   title?: string
   columns?: Column
-  companys?: Company[]
-  onEdit: (id: string, name: string) => void
+  units?: Unit[]
+  onEdit: (unit: Unit) => void
   onDelete: (id: string, name: string) => void
 }
 
-export function CardTableCompanies({
+export function CardTableUnits({
   color = 'dark',
   title,
   columns,
-  companys,
+  units,
   onEdit,
   onDelete,
 }: CardTableProps) {
@@ -59,7 +59,7 @@ export function CardTableCompanies({
                           ? 'bg-gray-50 text-gray-500 border-gray-100'
                           : 'bg-gray-800 text-gray-300 border-gray-700')
                       }
-                      key={index}
+                      key={index++}
                     >
                       {column}
                     </th>
@@ -67,8 +67,8 @@ export function CardTableCompanies({
               </tr>
             </thead>
             <tbody>
-              {companys &&
-                companys.map((row, index) => (
+              {units &&
+                units.map((row, index) => (
                   <tr
                     key={index++}
                     title={`Last Update: ${dateToLocale(
@@ -84,16 +84,6 @@ export function CardTableCompanies({
                       }
                     >
                       {row.name}
-                    </td>
-                    <td
-                      className={
-                        'border border-solid py-3 border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ' +
-                        (color === 'light'
-                          ? 'bg-gray-100 text-gray-500 border-gray-100'
-                          : 'bg-gray-800 text-gray-300 border-gray-700')
-                      }
-                    >
-                      {row.total_units}
                     </td>
                     <td
                       className={
@@ -115,9 +105,7 @@ export function CardTableCompanies({
                     >
                       <i
                         className='fas fa-edit text-blue-500 mr-2 cursor-pointer'
-                        onClick={() =>
-                          row._id && row.name && onEdit(row._id, row.name)
-                        }
+                        onClick={() => row._id && row.name && onEdit(row)}
                       ></i>
                       <i
                         className='fas fa-trash text-red-500 mr-2 cursor-pointer'

@@ -8,7 +8,7 @@ import { SearchCompanyServices } from '@company/services/SearchCompanyServices';
 import { UpdateCompanyService } from '@company/services/UpdateCompanyService';
 import { AuthenticateRequest } from '@user/infra/types/AuthenticateRequest';
 import { NextFunction, Request, Response } from 'express';
-import { Auth, ObjectId, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 export class CompanyController {
   private static async getRepository(): Promise<Repository<Company>> {
